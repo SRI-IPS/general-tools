@@ -1,0 +1,52 @@
+find_package(A17CapnpMsgs REQUIRED CONFIG)
+find_package(A17Utils REQUIRED CONFIG)
+find_package(azmq REQUIRED CONFIG)
+find_package(gflags REQUIRED CONFIG)
+find_package(spdlog REQUIRED CONFIG)
+
+if(NOT TARGET boost::regex)
+  find_package(Boost REQUIRED COMPONENTS regex)
+  add_library(boost::regex INTERFACE IMPORTED)
+  set_target_properties(boost::regex PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${Boost_REGEX_INCLUDE_DIRS}"
+    INTERFACE_LINK_LIBRARIES "${Boost_REGEX_LIBRARIES}")
+endif()
+
+if(NOT TARGET boost::system)
+  find_package(Boost REQUIRED COMPONENTS system)
+  add_library(boost::system INTERFACE IMPORTED)
+  set_target_properties(boost::system PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${Boost_SYSTEM_INCLUDE_DIRS}"
+    INTERFACE_LINK_LIBRARIES "${Boost_SYSTEM_LIBRARIES}")
+endif()
+
+if(NOT TARGET capnproto)
+  find_package(capnproto REQUIRED)
+  add_library(capnproto INTERFACE IMPORTED)
+  set_target_properties(capnproto PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CAPNPROTO_INCLUDE_DIRS}"
+    INTERFACE_LINK_LIBRARIES "${CAPNPROTO_LIBRARIES}")
+endif()
+
+if(NOT TARGET catch)
+  find_package(Catch REQUIRED)
+  add_library(catch INTERFACE IMPORTED)
+  set_target_properties(catch PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CATCH_INCLUDE_DIRS}"
+    INTERFACE_LINK_LIBRARIES "${CATCH_LIBRARIES}")
+endif()
+
+if(NOT TARGET threads)
+  find_package(Threads REQUIRED)
+  add_library(threads INTERFACE IMPORTED)
+  set_target_properties(threads PROPERTIES
+    INTERFACE_LINK_LIBRARIES "${CMAKE_THREAD_LIBS_INIT}")
+endif()
+
+if(NOT TARGET zeromq)
+  find_package(ZeroMQ REQUIRED)
+  add_library(zeromq INTERFACE IMPORTED)
+  set_target_properties(zeromq PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ZeroMQ_INCLUDE_DIRS}"
+    INTERFACE_LINK_LIBRARIES "${ZeroMQ_LIBRARIES}")
+endif()

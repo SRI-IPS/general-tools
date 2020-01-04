@@ -1,0 +1,18 @@
+Location: https://github.com/vsu91/ewok/tree/2b3d10bf77b0197d51727743b8a4ec9f3d4770e7
+License: Lesser GNU Public License (header only library)
+Date Added: 8/8/2017
+Version: 0.1
+Changes:
+* Import only the ewok_ring_buffer/include header files
+* Modify ring_buffer_base.h:
+  * commented out #include <visualization_msgs/Marker.h> (ros dependency)
+  * reimplemented all functions that call getMarkerHelper as getCloudHelper
+* modify ed_ring_bufferh:
+  * reimplemented all functions that call getMarkerHelper as getCloudHelper
+* modify raycast_ring_buffer.h:
+  * reimplemented all functions that call getMarkerHelper as getCloudHelper
+* created custom CMakeLists procedure
+* added unit tests
+* created custom BUILD file
+* added a decay function to decay occupancy cells
+* added an insideVolume check to the EuclideanDistanceRingBuffer

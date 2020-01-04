@@ -1,0 +1,15 @@
+# Find asio dir monitor
+
+find_path(_ASIO_DIR_MONITOR_INCLUDE_DIR dir_monitor/dir_monitor.hpp 
+	PATHS 
+		$ENV{A17_ROOT}/src/vendor/dir_monitor/include
+		)
+
+set(ASIO_DIR_MONITOR_INCLUDE_DIRS ${_ASIO_DIR_MONITOR_INCLUDE_DIR} ${ASIO_DIR_MONITOR_INCLUDE_DIRS})
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(ASIO_DIR_MONITOR DEFAULT_MSG ASIO_DIR_MONITOR_INCLUDE_DIRS)
+
+if(ASIO_DIR_MONITOR_FOUND)
+	set(FOUND TRUE)
+endif()

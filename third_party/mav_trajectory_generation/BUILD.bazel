@@ -1,0 +1,57 @@
+# Description:
+# Tools for polynomial trajectory generation and optimization. These techniques are especially
+# suitable for rotary-wing micro aerial vehicles (MAVs).
+
+licenses(["notice"])  # Apache 2.0 License
+
+load("//tools/rules:catch_cc_test.bzl", "catch_cc_test")
+
+exports_files(["LICENSE"])
+
+cc_library(
+    name = "mav_trajectory_generation",
+    srcs = [
+        "src/motion_defines.cpp",
+        "src/polynomial.cpp",
+        "src/rpoly.cpp",
+        "src/segment.cpp",
+        "src/timing.cpp",
+        "src/trajectory.cpp",
+        "src/vertex.cpp",
+    ],
+    hdrs = [
+        "include/mav_trajectory_generation/convolution.h",
+        "include/mav_trajectory_generation/extremum.h",
+        "include/mav_trajectory_generation/impl/polynomial_optimization_linear_impl.h",
+        "include/mav_trajectory_generation/motion_defines.h",
+        "include/mav_trajectory_generation/polynomial.h",
+        "include/mav_trajectory_generation/polynomial_optimization_linear.h",
+        "include/mav_trajectory_generation/rpoly.h",
+        "include/mav_trajectory_generation/segment.h",
+        "include/mav_trajectory_generation/test_utils.h",
+        "include/mav_trajectory_generation/timing.h",
+        "include/mav_trajectory_generation/trajectory.h",
+        "include/mav_trajectory_generation/vertex.h",
+    ],
+    strip_include_prefix = "include",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//external:eigen_restricted",
+        "//external:glog",
+    ],
+)
+
+catch_cc_test(
+    name = "mav_trajectory_generation_test",
+    srcs = [
+        "test/test_polynomial.cpp",
+        "test/test_polynomial_optimization.cpp",
+    ],
+    deps = [":mav_trajectory_generation"],
+)
+
+cc_test(
+    name = "polynomial_timing_evaluation",
+    srcs = ["src/polynomial_timing_evaluation.cpp"],
+    deps = [":mav_trajectory_generation"],
+)

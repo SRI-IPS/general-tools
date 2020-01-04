@@ -1,0 +1,130 @@
+load("//tools/rules:catch_cc_test.bzl", "catch_cc_test")
+
+cc_library(
+    name = "bind",
+    srcs = ["bind.h"],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "nearest_interval_bin",
+    srcs = ["nearest_interval_bin.cpp"],
+    hdrs = ["nearest_interval_bin.h"],
+    visibility = ["//visibility:private"],
+)
+
+cc_library(
+    name = "buffer_pool",
+    srcs = ["buffer_pool.cpp"],
+    hdrs = ["buffer_pool.h"],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "rate_measure",
+    srcs = ["rate_measure.cpp"],
+    hdrs = ["rate_measure.h"],
+    visibility = ["//visibility:public"],
+    deps = [":nearest_interval_bin"],
+)
+
+cc_library(
+    name = "repeater",
+    srcs = ["repeater.cpp"],
+    hdrs = ["repeater.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":bind",
+        "//cmake-out/boost",
+    ],
+)
+
+cc_library(
+    name = "watchdog",
+    srcs = ["watchdog.cpp"],
+    hdrs = ["watchdog.h"],
+    visibility = ["//visibility:public"],
+    deps = ["//cmake-out/boost"],
+)
+
+cc_library(
+    name = "asio_utils",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":nearest_interval_bin",
+        ":rate_measure",
+        ":repeater",
+        ":watchdog",
+    ],
+)
+
+cc_library(
+    name = "pid",
+    srcs = ["pid.cpp"],
+    hdrs = ["pid.h"],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "character_device",
+    srcs = ["character_device.cpp"],
+    hdrs = ["character_device.h"],
+    visibility = ["//visibility:private"],
+    deps = [
+        ":buffer_pool",
+        "//cmake-out/boost",
+        "//external:spdlog",
+    ],
+)
+
+cc_library(
+    name = "serial_port",
+    srcs = ["serial_port.cpp"],
+    hdrs = ["serial_port.h"],
+    visibility = ["//visibility:public"],
+    deps = [":character_device"],
+)
+
+cc_library(
+    name = "spdlog",
+    srcs = ["spdlog.cpp"],
+    hdrs = ["spdlog.h"],
+    visibility = ["//visibility:public"],
+    deps = ["//external:spdlog"],
+)
+
+catch_cc_test(
+    name = "rate_measure_test",
+    size = "small",
+    timeout = "short",
+    srcs = ["rate_measure_test.cpp"],
+    deps = [":rate_measure"],
+)
+
+catch_cc_test(
+    name = "buffer_pool_test",
+    size = "small",
+    timeout = "short",
+    srcs = ["buffer_pool_test.cpp"],
+    deps = [":buffer_pool"],
+)
+
+catch_cc_test(
+    name = "watchdog_test",
+    size = "small",
+    timeout = "short",
+    srcs = ["watchdog_test.cpp"],
+    deps = [
+        ":buffer_pool",
+        ":repeater",
+        ":watchdog",
+    ],
+)
+
+catch_cc_test(
+    name = "pid_test",
+    size = "small",
+    timeout = "short",
+    srcs = ["pid_test.cpp"],
+    deps = [":pid"],
+)

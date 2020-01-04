@@ -1,0 +1,106 @@
+load("//tools/rules:catch_cc_test.bzl", "catch_cc_test")
+
+cc_library(
+    name = "dispatch",
+    srcs = [
+        "address.cpp",
+        "client.cpp",
+        "defs.cpp",
+        "directory.cpp",
+        "directory_topic.cpp",
+        "listener.cpp",
+        "message_helpers.cpp",
+        "node.cpp",
+        "reply_server.cpp",
+        "request_client.cpp",
+        "server.cpp",
+        "smart_capnp_builder.cpp",
+        "smart_capnp_reader.cpp",
+        "smart_message_reader.cpp",
+        "socket.cpp",
+        "socket_types.cpp",
+        "sub_server.cpp",
+        "subscriber.cpp",
+        "topic.cpp",
+    ],
+    hdrs = [
+        "address.h",
+        "client.h",
+        "defs.h",
+        "directory.h",
+        "directory_topic.h",
+        "handlers.h",
+        "listener.h",
+        "message_helpers.h",
+        "node.h",
+        "pub_client.h",
+        "publisher.h",
+        "reply_server.h",
+        "request_client.h",
+        "server.h",
+        "smart_capnp_builder.h",
+        "smart_capnp_reader.h",
+        "smart_message_reader.h",
+        "socket.h",
+        "socket_types.h",
+        "sub_server.h",
+        "subscriber.h",
+        "topic.h",
+    ],
+    # There are some mac-specific pragmas in directory.cpp.
+    # This disables warnings when building on linux.
+    copts = ["-Wno-unknown-pragmas"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//a17/utils:asio_utils",
+        "//a17/utils:bind",
+        "//a17/utils:buffer_pool",
+        "//cmake-out/boost",
+        "//external:azmq",
+        "//external:capnproto",
+        "//external:eigen",
+        "//external:gflags",
+        "//external:spdlog",
+        "//external:zmq",
+    ],
+)
+
+catch_cc_test(
+    name = "dispatch_test",
+    size = "small",
+    srcs = [
+        "address_test.cpp",
+        "directory_test.cpp",
+        "messages_test.cpp",
+        "socket_test.cpp",
+        "topic_map_test.cpp",
+        "topic_test.cpp",
+    ],
+    deps = [
+        ":dispatch",
+        "//a17/capnp_msgs",
+        "//external:spdlog",
+    ],
+)
+
+# TODO(kgreenek): Move this under the py directory.
+# pypi deps:
+#   absl-py
+#   netifaces
+#   pycapnp
+#   pyzmq
+py_library(
+    name = "dispatch_py",
+    srcs = ["py/dispatch.py"],
+    visibility = ["//visibility:public"],
+)
+
+# TODO(kgreenek): Move this under the py directory.
+# pypi deps:
+#   pycapnp
+py_binary(
+    name = "dispatchrpc",
+    srcs = ["py/dispatchrpc.py"],
+    visibility = ["//visibility:public"],
+    deps = [":dispatch_py"],
+)

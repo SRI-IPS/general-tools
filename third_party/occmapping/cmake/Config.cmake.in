@@ -1,0 +1,4 @@
+@PACKAGE_INIT@
+include("${CMAKE_CURRENT_LIST_DIR}/@deps_config_install_file@")
+include("${CMAKE_CURRENT_LIST_DIR}/@targets_export_install_file@")
+check_required_components("@PROJECT_NAME@")

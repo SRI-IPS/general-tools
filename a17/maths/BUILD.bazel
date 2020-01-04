@@ -1,0 +1,115 @@
+load("//tools/rules:catch_cc_test.bzl", "catch_cc_test")
+
+# TODO(StefanJorgensen): Combine these targets into broader groups.
+cc_library(
+    name = "constants",
+    srcs = ["constants.cpp"],
+    hdrs = ["constants.h"],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "float_utils",
+    hdrs = ["float_utils.h"],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "matrix_utils",
+    hdrs = ["matrix_utils.h"],
+    visibility = ["//visibility:public"],
+    deps = ["//external:eigen"],
+)
+
+cc_library(
+    name = "polynomial_utils",
+    hdrs = [
+        "polynomial.h",
+        "polynomial_utils.h",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":float_utils",
+        "//third_party/mav_trajectory_generation",
+    ],
+)
+
+cc_library(
+    name = "angle_utils",
+    srcs = [
+        "angle_unroller.cpp",
+        "angle_utils.cpp",
+    ],
+    hdrs = [
+        "angle_unroller.h",
+        "angle_utils.h",
+        "quaternion_utils.h",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":constants",
+        "//external:eigen",
+    ],
+)
+
+cc_library(
+    name = "rotations",
+    srcs = ["rotations.cpp"],
+    hdrs = ["rotations.h"],
+    visibility = ["//visibility:public"],
+    deps = ["//external:eigen"],
+)
+
+# pypi deps:
+#   numpy
+py_library(
+    name = "py_transformations",
+    srcs = ["transformations.py"],
+    visibility = ["//visibility:public"],
+)
+
+catch_cc_test(
+    name = "matrix_utils_test",
+    size = "small",
+    srcs = ["matrix_utils_test.cpp"],
+    deps = [":matrix_utils"],
+)
+
+catch_cc_test(
+    name = "polynomial_utils_test",
+    size = "small",
+    srcs = [
+        "polynomial_test.cpp",
+        "polynomial_utils_test.cpp",
+    ],
+    deps = [
+        ":polynomial_utils",
+        "//external:eigen",
+    ],
+)
+
+catch_cc_test(
+    name = "angle_utils_test",
+    size = "small",
+    timeout = "short",
+    srcs = [
+        "angle_unroller_test.cpp",
+        "angle_utils_test.cpp",
+        "quaternion_utils_test.cpp",
+    ],
+    deps = [":angle_utils"],
+)
+
+catch_cc_test(
+    name = "float_utils_test",
+    size = "small",
+    srcs = ["float_utils_test.cpp"],
+    deps = [":float_utils"],
+)
+
+catch_cc_test(
+    name = "rotations_test",
+    size = "small",
+    srcs = ["rotations_test.cpp"],
+    deps = [":rotations"],
+)

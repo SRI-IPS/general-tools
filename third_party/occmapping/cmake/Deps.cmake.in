@@ -1,0 +1,15 @@
+if(NOT TARGET occmappingoctomap)
+  find_package(octomap REQUIRED)
+  add_library(occmappingoctomap INTERFACE IMPORTED)
+  set_target_properties(occmappingoctomap PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${OCTOMAP_INCLUDE_DIRS}"
+    INTERFACE_LINK_LIBRARIES "${OCTOMAP_LIBRARIES}")
+endif()
+
+if(NOT TARGET opencv3)
+  find_package(OpenCV 3 REQUIRED)
+  add_library(opencv3 INTERFACE IMPORTED)
+  set_target_properties(opencv3 PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${OpenCV_INCLUDE_DIRS}"
+    INTERFACE_LINK_LIBRARIES "${OpenCV_LIBS}")
+endif()

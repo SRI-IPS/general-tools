@@ -1,0 +1,85 @@
+# Description:
+#   Ewok: the 3D circular buffer component of TUM's "Real-Time Trajectory Replanning for MAVs using
+#   Uniform B-splines and 3D Circular Buffer". Ewok provides a real time volumetric occupancy grid
+#   useful for reactive path planning.
+
+licenses(["notice"])  # LGPL code-- header only
+
+# NOTE THAT THERE IS A LINKING BUG HERE--
+# As it stands, ewok will only build if and only if some level of optimization is specified.
+# otherwise, there is an error at linking stage. I have opened an issue on the maintainer's project
+# here: https://github.com/vsu91/ewok/issues/3
+# ANYTHING THAT DEPENDS ON THIS LIBRARY WILL NEED TO SPECIFY AT LEAST -O1 AS A COPT
+# TODO(murt): revisit this to fix the linking error.
+EWOK_COPTS = [
+    "-O3",
+]
+
+# NOTE that some modifications were made to these header only files.
+cc_library(
+    name = "ewok",
+    hdrs = [
+        "include/ewok/ed_ring_buffer.h",
+        "include/ewok/raycast_ring_buffer.h",
+        "include/ewok/ring_buffer_base.h",
+    ],
+    copts = EWOK_COPTS,
+    includes = ["include/ewok"],
+    linkstatic = 1,
+    strip_include_prefix = "include",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//external:eigen",
+    ],
+)
+
+load("//tools/rules:catch_cc_test.bzl", "catch_cc_test")
+
+cc_test(
+    name = "unit_tests",
+    size = "small",
+    srcs = [
+        "test/ed_ring_buffer_test.cpp",
+        "test/raycast_ring_buffer_test.cpp",
+        "test/ring_buffer_base_test.cpp",
+        "test/unittest_main.cpp",
+    ],
+    copts = EWOK_COPTS,
+    deps = [
+        ":ewok",
+        "//third_party/Catch:catch",
+    ],
+)
+
+catch_cc_test(
+    name = "ring_buffer_base_test",
+    size = "small",
+    timeout = "short",
+    srcs = [
+        "test/ring_buffer_base_test.cpp",
+    ],
+    copts = EWOK_COPTS,
+    deps = [":ewok"],
+)
+
+catch_cc_test(
+    name = "ed_ring_buffer_test",
+    size = "small",
+    timeout = "short",
+    srcs = [
+        "test/ed_ring_buffer_test.cpp",
+    ],
+    copts = EWOK_COPTS,
+    deps = [":ewok"],
+)
+
+catch_cc_test(
+    name = "raycast_ring_buffer_test",
+    size = "small",
+    timeout = "short",
+    srcs = [
+        "test/raycast_ring_buffer_test.cpp",
+    ],
+    copts = EWOK_COPTS,
+    deps = [":ewok"],
+)

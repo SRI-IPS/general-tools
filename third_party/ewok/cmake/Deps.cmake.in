@@ -1,0 +1,13 @@
+if(NOT TARGET catch)
+  find_package(Catch REQUIRED)
+  add_library(catch INTERFACE IMPORTED)
+  set_target_properties(catch PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CATCH_INCLUDE_DIRS}")
+endif()
+
+if(NOT TARGET eigen)
+  find_package(Eigen3 REQUIRED)
+  add_library(eigen INTERFACE IMPORTED)
+  set_target_properties(eigen PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${EIGEN3_INCLUDE_DIR}")
+endif()

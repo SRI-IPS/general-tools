@@ -1,0 +1,12 @@
+Location: https://github.com/ethz-asl/mav_trajectory_generation/archive/ee318fc2478a04c85a95e96dedb4a7be6731720c.tar.gz
+License: Apache-2.0
+Date Added: 7/14/2017
+Changes:
+* Delete packages except mav_trajectory_generation
+* From mav_trajectory_generation, delete polynomial_optimization_nonlinear header files that depended on nlopt.
+* Changed CMakeLists.txt to not use catkin
+* Added Deps.cmake.in file with dependencies to glog and eigen
+* Added closestPoint function to trajectory.h/cpp
+* Adapted unit tests to use Catch, removed nonlinear optimization related tests.
+* Added a convenient SetupFromWaypoint() function in the polynomial_optimization_linear.h/cpp
+* Add a BUILD file for bazel

@@ -1,0 +1,21 @@
+# Find dispatch
+
+find_path(_DISPATCH_INCLUDE_DIR Node.hpp PATHS $ENV{A17_ROOT}/deploy/include/dispatch)
+find_library(_DISPATCH_LIBRARY NAMES dispatch PATHS $ENV{A17_ROOT}/deploy/lib)
+
+find_package(ZeroMQ 4.1.3 REQUIRED)
+find_package(capnproto 0.5.3 REQUIRED)
+find_package(Threads QUIET)
+find_package(spdlog REQUIRED)
+
+get_target_property(spdlog_INCLUDE_DIRS spdlog::spdlog INTERFACE_INCLUDE_DIRECTORIES)
+
+set(DISPATCH_LIBRARIES ${_DISPATCH_LIBRARY} ${ZeroMQ_LIBRARIES} ${CAPNPROTO_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+set(DISPATCH_INCLUDE_DIRS ${_DISPATCH_INCLUDE_DIR} ${ZeroMQ_INCLUDE_DIRS} ${CAPNPROTO_INCLUDE_DIR} ${spdlog_INCLUDE_DIRS})
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(DISPATCH DEFAULT_MSG DISPATCH_INCLUDE_DIRS DISPATCH_LIBRARIES)
+
+if(DISPATCH_FOUND)
+	set(FOUND TRUE)
+endif()

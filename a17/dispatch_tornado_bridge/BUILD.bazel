@@ -1,0 +1,11 @@
+# pypi deps:
+#   tornado
+py_library(
+    name = "dispatch_tornado_bridge",
+    srcs = [
+        "__init__.py",
+        "dispatch_tornado_bridge.py",
+    ],
+    deps = ["//a17/dispatch:dispatch_py"],
+    visibility = ["//visibility:public"],
+)

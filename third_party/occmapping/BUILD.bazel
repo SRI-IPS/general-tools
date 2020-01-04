@@ -1,0 +1,37 @@
+# Description:
+#   The provided source code package contains an efficient and robust method for volumetric
+#   occupancy mapping. This method was specifically designed to provide robust results when used in
+#   conjunction with noisy measurements, as they result from stereo matching. This method is an
+#   extension of OctoMap, which you will require for compiling the provided source code.
+#   Details about our method can be found here:
+#     http://www.ra.cs.uni-tuebingen.de/software/occmapping/welcome_e.html#ref
+#
+#   This has been fully forked from the original code. It is no longer feasible to merge changes
+#   from upstream, but that is ok because the original project had been abandoned for years.
+
+licenses(["notice"])  # BSD 3-Clause
+
+exports_files(["LICENSE.txt"])
+
+cc_library(
+    name = "occmapping",
+    srcs = glob([
+        "src/*.cpp",
+        # This is needed (in conjunction with the copts line) because sources in occmapping include
+        # local header files without the occmapping prefix, but clients of this library will include
+        # headers with the occmapping prefix.
+        "inc/*.h",
+    ]),
+    hdrs = glob(["inc/*.h"]),
+    copts = [
+        "-Ithird_party/occmapping/inc",
+        # Force -O3 always. The extra optimization improves performance by more than an order of
+        # magnitude. It improves performance so much, it's not very useful to run this lib without
+        # optimizations enabled.
+        "-O3",
+    ],
+    include_prefix = "occmapping",
+    strip_include_prefix = "inc",
+    visibility = ["//visibility:public"],
+    deps = ["//external:octomap"],
+)
