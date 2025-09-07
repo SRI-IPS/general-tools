@@ -31,6 +31,14 @@ For a consistent and hassle-free development environment, we recommend using Doc
 
 * [Docker](https://docs.docker.com/get-docker/)
 
+* **Linux Post-installation:** To run Docker commands without `sudo`, you must add your user to the `docker` group. This is a one-time setup.
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+After running this command, you must **log out and log back in** for the new group membership to be applied. For more details, see the official Docker documentation.
+
 **Usage:**
 
 1. Make the helper script executable:
