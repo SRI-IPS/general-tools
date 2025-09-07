@@ -83,16 +83,6 @@ bazel build //...
 bazel test //...
 ```
 
-## License
-
-The code in the `a17` directory is licensed under the **BSD 3-Clause "New" or "Revised" License**. See the LICENSE file for the full text.
-
-## Getting Started
-
-We recommend starting with the `dispatch` library. Please see the detailed documentation in its directory:
-
-* **`a17/dispatch/README.md`**
-
 ### Automated Build & Test (for CI)
 
 If you want to run all builds and tests in one non-interactive command, use the `run-ci.sh` script. This is ideal for continuous integration or for quickly verifying the project state.
@@ -110,3 +100,13 @@ If you want to run all builds and tests in one non-interactive command, use the 
     ```
 
 This will execute the CMake and Bazel builds and run all associated unit tests inside the Docker container.
+
+## License
+
+The code in the `a17` directory is licensed under the **BSD 3-Clause "New" or "Revised" License**. See the LICENSE file for the full text.
+
+## Getting Started
+
+We recommend starting with the `dispatch` library. Please see the detailed documentation in its directory:
+
+* **`a17/dispatch/README.md`**
