@@ -12,7 +12,6 @@ set -e
 echo "--- Installing dependencies using apt ---"
 
 apt-get update && apt-get install -y \
-    libboost-all-dev \
     libzmq3-dev \
     libsodium-dev \
     capnproto \
