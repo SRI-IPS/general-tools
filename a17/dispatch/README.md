@@ -76,6 +76,6 @@ bazel build //a17/dispatch/...
 
 To run the tests:
 
-```sh 
+```sh
 bazel test //a17/dispatch/... 
 ```
