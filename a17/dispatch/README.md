@@ -76,11 +76,10 @@ First, set an environment variable pointing to your workspace root (e.g., the di
 export A17_ROOT=/path/to/your/workspace
 ```
 
-Then, update your library and Python paths. This example assumes you have also built other `a17` components like `capnp_msgs`.
-
+Then, update your library and Python paths.
 ```bash
-export PYTHONPATH=$A17_ROOT/a17/capnp_msgs/build/py:$A17_ROOT/a17/dispatch/build/py:$PYTHONPATH
-export LD_LIBRARY_PATH=$A17_ROOT/a17/capnp_msgs/build/lib:$A17_ROOT/a17/dispatch/build/lib:$LD_LIBRARY_PATH
+export PYTHONPATH=$A17_ROOT/a17/dispatch/build/py:$PYTHONPATH
+export LD_LIBRARY_PATH=$A17_ROOT/a17/dispatch/build/lib:$LD_LIBRARY_PATH
 ```
 
 ### Building with Bazel
