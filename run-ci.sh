@@ -38,7 +38,9 @@ echo '--- Building a17-utils ---'
 cd /workspace/a17/utils
 mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=\${INSTALL_DIR}
-make -j4 install
+make -j4
+./unittests_A17Utils
+make install
 
 # 3. Build and test a17-dispatch, pointing it to our local install directory
 echo '--- Building a17-dispatch ---'
