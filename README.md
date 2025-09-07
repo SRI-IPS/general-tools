@@ -4,20 +4,20 @@ This repository contains a collection of C++ and Python libraries designed for b
 
 ## Key Components
 
-*   **`a17/dispatch`**: A custom middleware library for service-oriented communication.
-    *   **Protocols**: Built on top of ZeroMQ for networking and Cap'n Proto for efficient data serialization.
-    *   **Patterns**: Provides high-level abstractions for Publish/Subscribe and Request/Reply messaging patterns.
-    *   **Service Discovery**: Features a decentralized service discovery mechanism using UDP multicast, allowing nodes to dynamically find each other on the network.
-    *   **Languages**: Offers both C++ and Python APIs for seamless integration.
-    *   **Execution Model**: Uses a high-performance, asynchronous event loop powered by Boost.Asio.
+* **`a17/dispatch`**: A custom middleware library for service-oriented communication.
+  * **Protocols**: Built on top of ZeroMQ for networking and Cap'n Proto for efficient data serialization.
+  * **Patterns**: Provides high-level abstractions for Publish/Subscribe and Request/Reply messaging patterns.
+  * **Service Discovery**: Features a decentralized service discovery mechanism using UDP multicast, allowing nodes to dynamically find each other on the network.
+  * **Languages**: Offers both C++ and Python APIs for seamless integration.
+  * **Execution Model**: Uses a high-performance, asynchronous event loop powered by Boost.Asio.
 
-*   **`a17/utils`**: A collection of general-purpose C++ utilities, including a memory-pool buffer allocator used by `dispatch`.
+* **`a17/utils`**: A collection of general-purpose C++ utilities, including a memory-pool buffer allocator used by `dispatch`.
 
-*   **`a17/capnp_msgs`**: A set of common Cap'n Proto message definitions.
+* **`a17/capnp_msgs`**: A set of common Cap'n Proto message definitions.
 
-*   **`third_party`**: Contains dependencies and helper tools, including:
-    *   Catch2 for C++ unit testing.
-    *   A tool for generating a `compile_commands.json` database for use with clang-based editors.
+* **`third_party`**: Contains dependencies and helper tools, including:
+  * Catch2 for C++ unit testing.
+  * A tool for generating a `compile_commands.json` database for use with clang-based editors.
 
 ## Build Systems
 
@@ -57,4 +57,4 @@ The code in the `a17` directory is licensed under the **BSD 3-Clause "New" or "R
 
 We recommend starting with the `dispatch` library. Please see the detailed documentation in its directory:
 
-*   **`a17/dispatch/README.md`**
+* **`a17/dispatch/README.md`**
