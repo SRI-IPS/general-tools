@@ -17,7 +17,7 @@ genrule(
 
 cc_library(
     name = "catch",
-    hdrs = ["single_include/catch.hpp"],
+    hdrs = ["catch.hpp"],
     includes = ["single_include"],
     visibility = ["//visibility:public"],
 )

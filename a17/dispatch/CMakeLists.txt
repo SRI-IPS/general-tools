@@ -1,10 +1,18 @@
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
-set(CMAKE_CXX_STANDARD 14)
 
 project(A17Dispatch VERSION 0.1.0 LANGUAGES CXX)
 
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Add the custom cmake module path for finding dependencies.
+# For backward compatibility, we first check for the A17_ROOT environment variable.
 if(DEFINED ENV{A17_ROOT})
-  include("$ENV{A17_ROOT}/cmake/A17DefaultPaths.cmake")
+  # include("$ENV{A17_ROOT}/cmake/A17DefaultPaths.cmake")
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{A17_ROOT}/cmake")
+else()
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../../cmake")
 endif()
 
 # Needed for MacOS compatibility. This allows the installed library to be linked against from
@@ -33,8 +41,20 @@ set(targets_export_install_file "${targets_export_name}.cmake")
 
 # ------------------------------------------------------------------------------
 # Import dependencies
-configure_file("cmake/Deps.cmake.in" "${deps_config}" @ONLY)
-include("${deps_config}")
+##configure_file("cmake/Deps.cmake.in" "${deps_config}" @ONLY)
+##include("${deps_config}")
+find_package(A17Utils REQUIRED) # Local project dependency
+find_package(AZMQ REQUIRED) # Header-only
+find_package(Boost REQUIRED COMPONENTS regex system)
+find_package(CapnProto REQUIRED)
+find_package(Gflags REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(ZeroMQ REQUIRED)
+find_package(Threads REQUIRED)
+
+# For testing
+find_package(Catch REQUIRED)
+find_package(A17CapnpMsgs REQUIRED)
 
 # ------------------------------------------------------------------------------
 # Build dispatch lib
@@ -62,15 +82,15 @@ target_include_directories(dispatch PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(dispatch PUBLIC
-  a17::utils
-  azmq
-  boost::regex
-  boost::system
-  capnproto
-  gflags
+  a17::utils       # from A17Utils
+  azmq::azmq       # from AZMQ
+  Boost::regex
+  Boost::system
+  CapnProto::capnp
+  gflags::gflags
   spdlog::spdlog
-  threads
-  zeromq)
+  Threads::Threads
+  ZeroMQ::libzmq)
 install(TARGETS dispatch
   EXPORT "${targets_export_name}"
   ARCHIVE DESTINATION "lib"
@@ -98,12 +118,12 @@ add_executable(${TEST_NAME}
   "topic_map_test.cpp"
   "topic_test.cpp"
 )
-target_link_libraries(${TEST_NAME}
+target_link_libraries(${TEST_NAME} PRIVATE
+  dispatch
   a17::capnp_msgs
-  catch
-  dispatch)
+  catch)
 
-enable_testing()
+include(CTest)
 add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 
 # ------------------------------------------------------------------------------

@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 
-project(A17DispatchTornadoBridge VERSION 0.1.0 LANGUAGES CXX)
+project(A17DispatchTornadoBridge VERSION 0.1.0)
 
-if(DEFINED ENV{A17_ROOT})
-  include("$ENV{A17_ROOT}/cmake/A17DefaultPaths.cmake")
-endif()
-
+# This project only installs Python files.
+# The destination path is relative to CMAKE_INSTALL_PREFIX.
 set(python_install_dir "py")
 
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/"
-  DESTINATION "${python_install_dir}/a17/dispatch_tornado_bridge"
-  FILES_MATCHING PATTERN "*.py"
-  PATTERN "__pycache__" EXCLUDE
-  PATTERN "build" EXCLUDE)
+# Install the specific python files instead of the whole directory
+# to avoid installing unintended files (like this CMakeLists.txt).
+install(FILES
+    "__init__.py"
+    "dispatch_tornado_bridge.py"
+    DESTINATION "${python_install_dir}/a17/dispatch_tornado_bridge"
+)
