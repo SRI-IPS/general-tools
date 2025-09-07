@@ -21,6 +21,40 @@ This repository contains a collection of C++ and Python libraries designed for b
 
 ## Build Systems
 
+This project can be built natively on Linux/macOS or within a provided Docker container.
+
+### Development with Docker (Recommended)
+
+For a consistent and hassle-free development environment, we recommend using Docker. This avoids the need to manually install dependencies on your host machine.
+
+**Prerequisites:**
+
+* [Docker](https://docs.docker.com/get-docker/)
+
+**Usage:**
+
+1. Make the helper script executable:
+
+    ```bash
+    chmod +x docker-dev.sh
+    ```
+
+2. Run the script to start the development container:
+
+    ```bash
+    ./docker-dev.sh
+    ```
+
+This will first build the Docker image (a one-time process) and then launch a bash shell inside the container. Your project directory is mounted at `/workspace`.
+
+Inside the container, you can now run the CMake or Bazel builds as you normally would. For example:
+
+```bash
+# To run the CMake build for dispatch
+cd a17/dispatch && mkdir build && cd build
+cmake .. && make && ./unittests_A17Dispatch
+```
+
 This project supports both **CMake** and **Bazel** for building the C++ components.
 
 ### Building with CMake
@@ -58,3 +92,21 @@ The code in the `a17` directory is licensed under the **BSD 3-Clause "New" or "R
 We recommend starting with the `dispatch` library. Please see the detailed documentation in its directory:
 
 * **`a17/dispatch/README.md`**
+
+### Automated Build & Test (for CI)
+
+If you want to run all builds and tests in one non-interactive command, use the `run-ci.sh` script. This is ideal for continuous integration or for quickly verifying the project state.
+
+1. Make the script executable:
+
+    ```bash
+    chmod +x run-ci.sh
+    ```
+
+2. Run the script:
+
+    ```bash
+    ./run-ci.sh
+    ```
+
+This will execute the CMake and Bazel builds and run all associated unit tests inside the Docker container.
