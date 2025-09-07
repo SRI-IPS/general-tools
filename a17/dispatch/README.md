@@ -18,7 +18,7 @@
 You will need the following libraries installed:
 
 * **Boost** (>= 1.65.1, components: `system`, `regex`)
-* **ZeroMQ** (libzmq >= 4.2.5)
+* **ZeroMQ** (libzmq >= 4.2.5) - Note: Requires **libsodium** for CURVE security features.
 * **cppzmq** (Header-only ZeroMQ C++ bindings)
 * **azmq** (Header-only Boost.Asio integration for ZeroMQ)
 * **Cap'n Proto** (capnp, capnpc >= 0.6.1)

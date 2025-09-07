@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get update && apt-get install -y \
     libboost-all-dev \
     libzmq3-dev \
-    libsodium-dev \
+    libsodium-dev \ # Required by ZeroMQ for CURVE security
     capnproto \
     libcapnp-dev \
     libgflags-dev \
