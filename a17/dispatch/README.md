@@ -24,7 +24,7 @@ You will need the following libraries installed:
 * **Cap'n Proto** (capnp, capnpc)
 * **spdlog** (for logging)
 * **gflags** (for command-line flag parsing)
-* **Catch2** (for running tests)
+* **Catch** (for running tests)
 
 We recommend using a package manager like vcpkg, Conan, or your system's package manager (e.g., `apt`, `brew`) to install them.
 

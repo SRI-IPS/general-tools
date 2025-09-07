@@ -16,7 +16,7 @@ This repository contains a collection of C++ and Python libraries designed for b
 * **`a17/capnp_msgs`**: A set of common Cap'n Proto message definitions.
 
 * **`third_party`**: Contains dependencies and helper tools, including:
-  * Catch2 for C++ unit testing.
+  * Catch for C++ unit testing.
   * A tool for generating a `compile_commands.json` database for use with clang-based editors.
 
 ## Build Systems
