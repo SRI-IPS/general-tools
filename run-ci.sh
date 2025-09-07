@@ -19,11 +19,24 @@ echo "--- Running CI build and tests inside Docker container ---"
 # Define the sequence of commands to run inside the container
 CI_COMMANDS="
 set -e
-echo '>>> BUILDING AND TESTING WITH CMAKE <<<'
+echo '>>> BUILDING AND TESTING WITH CMAKE (in order) <<<'
+
+# 1. Create a local directory to install libraries into
+INSTALL_DIR=/workspace/install
+mkdir -p \${INSTALL_DIR}
+
+# 2. Build and install a17-utils
+echo '--- Building a17-utils ---'
+cd /workspace/a17/utils
+mkdir -p build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=\${INSTALL_DIR}
+make install
+
+# 3. Build and test a17-dispatch, pointing it to our local install directory
+echo '--- Building a17-dispatch ---'
 cd /workspace/a17/dispatch
-mkdir -p build
-cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
+mkdir -p build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=\${INSTALL_DIR}
 make
 ./unittests_A17Dispatch
 
