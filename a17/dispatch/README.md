@@ -17,13 +17,13 @@
 
 You will need the following libraries installed:
 
-* **Boost** (>= 1.65, components: `system`, `regex`)
-* **ZeroMQ** (libzmq)
+* **Boost** (>= 1.65.1, components: `system`, `regex`)
+* **ZeroMQ** (libzmq >= 4.2.5)
 * **cppzmq** (Header-only ZeroMQ C++ bindings)
 * **azmq** (Header-only Boost.Asio integration for ZeroMQ)
-* **Cap'n Proto** (capnp, capnpc)
-* **spdlog** (for logging)
-* **gflags** (for command-line flag parsing)
+* **Cap'n Proto** (capnp, capnpc >= 0.6.1)
+* **spdlog** (>= 1.3.1, for logging)
+* **gflags** (>= 2.2.2, for command-line flag parsing)
 * **Catch** (for running tests)
 
 We recommend using a package manager like vcpkg, Conan, or your system's package manager (e.g., `apt`, `brew`) to install them.
@@ -61,8 +61,26 @@ make install
 
 To run the unit tests:
 
-```sh
+```bash
+cd build
 ./unittests_A17Dispatch
+```
+
+### Environment Setup (Linux/macOS)
+
+After building, you may need to set your `PYTHONPATH` and `LD_LIBRARY_PATH` to run applications that use the `dispatch` library from your build directory.
+
+First, set an environment variable pointing to your workspace root (e.g., the directory containing the `a17` folder):
+
+```bash
+export A17_ROOT=/path/to/your/workspace
+```
+
+Then, update your library and Python paths. This example assumes you have also built other `a17` components like `capnp_msgs`.
+
+```bash
+export PYTHONPATH=$A17_ROOT/a17/capnp_msgs/build/py:$A17_ROOT/a17/dispatch/build/py:$PYTHONPATH
+export LD_LIBRARY_PATH=$A17_ROOT/a17/capnp_msgs/build/lib:$A17_ROOT/a17/dispatch/build/lib:$LD_LIBRARY_PATH
 ```
 
 ### Building with Bazel
