@@ -25,7 +25,7 @@ rm -rf /workspace/a17/utils/build
 rm -rf /workspace/a17/dispatch/build
 rm -rf /workspace/install
 # Clean Bazel cache
-cd /workspace && bazel clean --expunge
+cd /workspace && bazel --enable_bzlmod=false clean --expunge
 
 echo '>>> BUILDING AND TESTING WITH CMAKE (in order) <<<'
 
@@ -38,19 +38,19 @@ echo '--- Building a17-utils ---'
 cd /workspace/a17/utils
 mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=\${INSTALL_DIR}
-make install
+make -j4 install
 
 # 3. Build and test a17-dispatch, pointing it to our local install directory
 echo '--- Building a17-dispatch ---'
 cd /workspace/a17/dispatch
 mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=\${INSTALL_DIR}
-make
+make -j4
 ./unittests_A17Dispatch
 
 echo '>>> BUILDING AND TESTING WITH BAZEL <<<'
 cd /workspace
-bazel test //...
+bazel --enable_bzlmod=false test //...
 "
 
 # Run the commands non-interactively inside the container
