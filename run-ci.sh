@@ -19,6 +19,14 @@ echo "--- Running CI build and tests inside Docker container ---"
 # Define the sequence of commands to run inside the container
 CI_COMMANDS="
 set -e
+echo '>>> CLEANING PREVIOUS BUILD ARTIFACTS <<<'
+# Clean CMake build directories
+rm -rf /workspace/a17/utils/build
+rm -rf /workspace/a17/dispatch/build
+rm -rf /workspace/install
+# Clean Bazel cache
+cd /workspace && bazel clean --expunge
+
 echo '>>> BUILDING AND TESTING WITH CMAKE (in order) <<<'
 
 # 1. Create a local directory to install libraries into
