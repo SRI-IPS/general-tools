@@ -4,37 +4,41 @@
 # It builds dependencies from source to ensure specific versions are used.
 FROM ubuntu:20.04
 
-# Install base dependencies, build tools, and Bazel from repositories
+# Avoid prompts from apt during installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Define Bazelisk version to install
+ARG BAZELISK_VERSION=v1.19.0
+
+# Install base dependencies and build tools.
+# We will install Bazel using Bazelisk instead of apt.
 RUN apt-get update && apt-get install -y \
     build-essential \
     git \
     cmake \
     wget \
     curl \
-    unzip \
     python3-pip \
     python3-dev \
     libboost-all-dev \
-    # For Bazel installation
-    apt-transport-https \
-    gnupg \
-    && curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > /etc/apt/trusted.gpg.d/bazel.gpg \
-    && echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | tee /etc/apt/sources.list.d/bazel.list \
-    && apt-get update && apt-get install -y bazel \
+    # For Bazelisk download
+    unzip \
+    # Clean up apt lists to reduce image size
     && rm -rf /var/lib/apt/lists/*
 
-# Copy and run the dependency installation script
-COPY install_dependencies.sh /usr/local/bin/install_dependencies.sh
-RUN chmod +x /usr/local/bin/install_dependencies.sh && \
-    /usr/local/bin/install_dependencies.sh && \
-    rm /usr/local/bin/install_dependencies.sh
+# Install Bazelisk, which will read .bazelversion and use the correct Bazel version
+RUN wget https://github.com/bazelbuild/bazelisk/releases/download/${BAZELISK_VERSION}/bazelisk-linux-amd64 -O /usr/local/bin/bazel \
+    && chmod +x /usr/local/bin/bazel
 
-# Install project-specific Python dependencies via pip
-RUN pip3 install --no-cache-dir \
-    pycapnp \
-    pyzmq \
-    tornado \
-    netifaces
+# Copy and run the dependency installation script
+COPY install_apt_dependencies.sh /usr/local/bin/install_apt_dependencies.sh
+RUN chmod +x /usr/local/bin/install_apt_dependencies.sh && \
+    /usr/local/bin/install_apt_dependencies.sh && \
+    rm /usr/local/bin/install_apt_dependencies.sh
+
+# Install Python dependencies from requirements file
+COPY requirements.txt /tmp/requirements.txt
+RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
 
 # Create a non-root user to match the host user, avoiding file permission issues.
 # The user ID and group ID will be passed in during the build.
@@ -44,3 +48,6 @@ RUN groupadd -g $GID user && useradd -u $UID -g $GID -ms /bin/bash user
 
 # Set final working directory for the container
 WORKDIR /workspace
+
+# Set the A17_ROOT environment variable for CMake and other tools to find project files.
+ENV A17_ROOT=/workspace

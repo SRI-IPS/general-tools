@@ -1,0 +1,25 @@
+# Core development and linting tools
+grpcio-tools==1.43.0
+pyinterval==1.2.0
+pylint==1.7.2
+yapf==0.24.0
+
+# Core runtime dependencies
+absl-py==0.9.0
+googleapis-common-protos==1.5.3
+grpcio==1.43.0
+netifaces==0.10.6
+numpy==1.19.5
+protobuf==3.19.3
+psutil==5.6.6
+py_trees==0.7.6
+pycapnp==0.6.4
+pygtail==0.8.0
+pyserial==3.4
+requests==2.27.1
+requests-toolbelt==0.8.0
+tornado==6.1
+
+# Required by dispatch, but was commented out in the source list.
+# Using a recent, unpinned version to match previous Dockerfile behavior.
+pyzmq

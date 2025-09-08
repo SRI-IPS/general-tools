@@ -3,10 +3,14 @@ set -e
 
 IMAGE_NAME="a17-tools-dev"
 
+# Read bazel version for the build-arg
+BAZEL_VERSION=$(cat .bazelversion)
+
 # Check if the Docker image exists
 if [[ "$(docker images -q ${IMAGE_NAME}:latest 2> /dev/null)" == "" ]]; then
   echo "Docker image '${IMAGE_NAME}' not found. Building..."
   docker build \
+    --build-arg BAZEL_VERSION=${BAZEL_VERSION} \
     --build-arg UID=$(id -u) \
     --build-arg GID=$(id -g) \
     -t ${IMAGE_NAME} \
