@@ -1,0 +1,7 @@
+# This file makes the root directory a Bazel package.
+
+exports_files([
+    "requirements.txt",
+    "LICENSE",
+    ".bazelversion",
+])
