@@ -1,0 +1,20 @@
+load("//tools/rules:capnproto.bzl", "cc_capnp_library")
+
+cc_capnp_library(
+    name = "capnp_msgs",
+    srcs = glob(["**/*.capnp"]),
+    visibility = ["//visibility:public"],
+)
+
+# pypi deps:
+#   pycapnp
+py_library(
+    name = "capnp_msgs_py",
+    srcs = [
+        # These are require in order for capnp's find module logic to work.
+        # TODO(kgreenek): Make a capnp rule for python that generates these automatically.
+        "__init__.py",
+    ],
+    data = glob(["**/*.capnp"]),
+    visibility = ["//visibility:public"],
+)

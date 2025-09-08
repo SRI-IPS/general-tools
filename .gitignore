@@ -3,6 +3,7 @@ cmake-*
 build/
 buildme/
 /env/
+install/
 /pyenv
 __pycache__
 .cache
