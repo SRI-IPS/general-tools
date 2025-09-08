@@ -1,0 +1,19 @@
+bazel-*
+cmake-*
+build/
+buildme/
+/env/
+/pyenv
+__pycache__
+.cache
+compile_commands.json
+*~
+
+# Go
+go.sum
+
+# protobufs
+fetch.pb.ts
+
+# IDE
+.idea/
