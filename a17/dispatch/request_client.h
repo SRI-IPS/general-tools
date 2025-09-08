@@ -5,6 +5,10 @@
 #include "boost/asio/deadline_timer.hpp"
 #include "boost/asio/io_service.hpp"
 #include "spdlog/spdlog.h"
+#include <spdlog/common.h>
+#if SPDLOG_VERSION >= 10000
+  #include <spdlog/sinks/stdout_color_sinks.h>
+#endif
 
 #include "directory.h"
 #include "handlers.h"
@@ -37,8 +41,13 @@ class RequestClient {
   void onDirectoryTopicsChanged(const std::string &topic_name, const GuidTopicMap &guid_topic_map);
   void cleanupRequest();
 
+ #if SPDLOG_VERSION >= 10000
+  std::shared_ptr<spdlog::logger> logger_ = std::make_shared<spdlog::logger>(
+      "request_client", std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
+ #else
   std::shared_ptr<spdlog::logger> logger_ = std::make_shared<spdlog::logger>(
       "request_client", std::make_shared<spdlog::sinks::stdout_sink_mt>());
+#endif
 
   boost::asio::io_service *ios_;
   a17::dispatch::Directory *directory_;

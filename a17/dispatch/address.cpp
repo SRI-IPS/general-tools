@@ -1,5 +1,8 @@
 #include "address.h"
 
+#if SPDLOG_VERSION >= 10000
+  #include <spdlog/sinks/stdout_color_sinks.h>
+#endif
 
 namespace a17 {
 namespace dispatch {

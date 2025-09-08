@@ -4,6 +4,7 @@
 #include "socket.h"
 #include "address.h"
 #include "a17/utils/buffer_pool.h"
+#include <set>
 
 namespace a17 {
 namespace dispatch {

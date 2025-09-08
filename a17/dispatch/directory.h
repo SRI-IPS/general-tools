@@ -8,7 +8,8 @@
 #include "boost/asio.hpp"
 #include "boost/asio/ip/multicast.hpp"
 #include "boost/asio/ip/udp.hpp"
-#include "spdlog/logger.h"
+#include <spdlog/logger.h>
+#include <spdlog/common.h>
 
 #include "a17/utils/buffer_pool.h"
 
