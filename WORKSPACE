@@ -42,93 +42,12 @@ rules_proto_dependencies()
 
 rules_proto_toolchains()
 
-## boringssl - January 9, 2023 (must be before http_archive io_bazel_rules_go and org_golang_google_grpc)
+## boringssl - January 9, 2023
 # https://github.com/google/boringssl/blob/master/INCORPORATING.md
 git_repository(
     name = "boringssl",
     commit = "f8a10eeef9549601a91c4525f55bf8a59d338eff",
     remote = "https://boringssl.googlesource.com/boringssl",
-)
-
-# Rules Go - June 28, 2023
-http_archive(
-    name = "io_bazel_rules_go",
-    sha256 = "51dc53293afe317d2696d4d6433a4c33feedb7748a9e352072e2ec3c0dafd2c6",
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.40.1/rules_go-v0.40.1.zip",
-        "https://github.com/bazelbuild/rules_go/releases/download/v0.40.1/rules_go-v0.40.1.zip",
-    ],
-)
-
-load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
-
-go_rules_dependencies()
-
-go_register_toolchains(version = "1.20.5")
-
-# Gazelle : depends on Rules Go
-http_archive(
-    name = "bazel_gazelle",
-    sha256 = "b8b6d75de6e4bf7c41b7737b183523085f56283f6db929b86c5e7e1f09cf59c9",
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.31.1/bazel-gazelle-v0.31.1.tar.gz",
-        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.31.1/bazel-gazelle-v0.31.1.tar.gz",
-    ],
-)
-
-load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies", "go_repository")
-
-gazelle_dependencies()
-
-# deps for rules_go
-go_repository(
-    name = "org_golang_google_grpc",
-    build_file_proto_mode = "disable",
-    importpath = "google.golang.org/grpc",
-    sum = "h1:fPVVDxY9w++VjTZsYvXWqEf9Rqar/e+9zYfxKK+W+YU=",
-    version = "v1.50.0",
-)
-
-go_repository(
-    name = "org_golang_google_protobuf",
-    importpath = "google.golang.org/protobuf",
-    sum = "h1:xsAVV57WRhGj6kEIi8ReJzQlHHqcBYCElAvkovg3B/4=",
-    version = "v1.28.1",
-)
-
-go_repository(
-    name = "com_github_google_go_cmp",
-    importpath = "github.com/google/go-cmp",
-    sum = "h1:xsAVV57WRhGj6kEIi8ReJzQlHHqcBYCElAvkovg3B/4=",
-    version = "v0.4.0",
-)
-
-go_repository(
-    name = "org_golang_x_net",
-    importpath = "golang.org/x/net",
-    sum = "h1:aWJ/m6xSmxWBx+V0XRHTlrYrPG56jKsLdTFmsSsCzOM=",
-    version = "v0.9.0",
-)
-
-go_repository(
-    name = "org_golang_x_text",
-    importpath = "golang.org/x/text",
-    sum = "h1:2sjJmO8cDvYveuX97RDLsxlyUxLl+GHoLxBiRdHllBE=",
-    version = "v0.9.0",  # April 04, 2023
-)
-
-go_repository(
-    name = "org_golang_x_sys_unix",
-    importpath = "golang.org/x/sys",
-    sum = "h1:3jlCCIQZPdOYu1h8BkNvLz8Kgwtae2cagcG/VamtZRU=",
-    version = "v0.7.0",
-)
-
-go_repository(
-    name = "org_golang_x_crypto",
-    importpath = "golang.org/x/crypto",
-    sum = "h1:wBqGXzWJW6m1XrIKlAH0Hs1JJ7+9KBwnIO8v66Q9cHc=",
-    version = "v0.14.0",
 )
 
 # rules_docker - June 22, 2022
@@ -158,10 +77,6 @@ dockerfile_image(
     dockerfile = "//a17/backend/docker/service:Dockerfile",
 )
 
-load("@io_bazel_rules_docker//go:image.bzl", _go_image_repos = "repositories")
-
-_go_image_repos()
-
 # ------------------------------------------------------------------------------
 # rules_proto_grpc - December 04, 2022
 http_archive(
@@ -176,15 +91,6 @@ load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_repos", "rules_pr
 rules_proto_grpc_toolchains()
 
 rules_proto_grpc_repos()
-
-# grpc gateway
-load("@rules_proto_grpc//grpc-gateway:repositories.bzl", rules_proto_grpc_gateway_repos = "gateway_repos")
-
-rules_proto_grpc_gateway_repos()
-
-load("@grpc_ecosystem_grpc_gateway//:repositories.bzl", "go_repositories")
-
-go_repositories()
 
 # python grpc rules
 load("@rules_proto_grpc//python:repositories.bzl", rules_proto_grpc_python_repos = "python_repos")
@@ -205,6 +111,8 @@ load("@python3_9//:defs.bzl", "interpreter")
 load("@rules_python//python:pip.bzl", "pip_parse")
 
 pip_parse(
+    name = "pip_deps",
+    requirements_lock = "//:requirements.txt",
     python_interpreter_target = interpreter,
 )
 
@@ -253,430 +161,6 @@ bind(
 )
 
 # ------------------------------------------------------------------------------
-# Needed by //a17/backend/...
-go_repository(
-    name = "com_github_stretchr_testify",
-    commit = "0ab3ce1249292a7221058b9e370472bca8f04813",  # Jan 3, 2023
-    importpath = "github.com/stretchr/testify",
-)
-
-go_repository(
-    name = "com_github_stretchr_objx",
-    importpath = "github.com/stretchr/objx",
-    tag = "v0.5.0",  # Oct 14, 2022
-)
-
-go_repository(
-    name = "com_github_davecgh_go_spew",
-    importpath = "github.com/davecgh/go-spew",
-    tag = "v1.1.1",  # Aug 17, 2018
-)
-
-# Needed by //a17/backend/cmd/clients/...
-go_repository(
-    name = "com_github_docopt_docopt_go",
-    commit = "ee0de3bc6815ee19d4a46c7eb90f829db0e014b1",  # Jan 11, 2018
-    importpath = "github.com/docopt/docopt-go",
-)
-
-# Needed by //a17/backend/services/...
-go_repository(
-    name = "com_github_google_uuid",
-    importpath = "github.com/google/uuid",
-    tag = "v1.3.0",  # July 12, 2021
-)
-
-go_repository(
-    name = "com_github_globalsign_mgo",
-    importpath = "github.com/globalsign/mgo",
-    tag = "r2018.04.03",  # April 3, 2018
-)
-
-# Needed by //a17/backend/config
-go_repository(
-    name = "com_github_spf13_viper",
-    importpath = "github.com/spf13/viper",
-    tag = "v1.14.0",  # November 06, 2022
-)
-
-go_repository(
-    name = "com_github_spf13_afero",
-    importpath = "github.com/spf13/afero",
-    tag = "v1.9.3",  # November 14, 2022
-)
-
-go_repository(
-    name = "com_github_spf13_cast",
-    importpath = "github.com/spf13/cast",
-    tag = "v1.5.0",  # May 11, 2022
-)
-
-go_repository(
-    name = "com_github_spf13_jwalterweatherman",
-    importpath = "github.com/spf13/jwalterweatherman",
-    tag = "v1.1.0",  # March 02, 2019
-)
-
-go_repository(
-    name = "com_github_spf13_pflag",
-    importpath = "github.com/spf13/pflag",
-    tag = "v1.0.5",  # September 18, 2019
-)
-
-go_repository(
-    name = "com_github_hashicorp_hcl",
-    importpath = "github.com/hashicorp/hcl",
-    tag = "v1.0.0",  # unknown
-)
-
-go_repository(
-    name = "com_github_subosito_gotenv",
-    importpath = "github.com/subosito/gotenv",
-    tag = "v1.4.1",  # August 23, 2022
-)
-
-go_repository(
-    name = "in_gopkg_ini_v1",
-    importpath = "gopkg.in/ini.v1",
-    tag = "v1.67.0",  # August 08, 2022
-)
-
-go_repository(
-    name = "com_github_magiconair_properties",
-    importpath = "github.com/magiconair/properties",
-    tag = "v1.8.7",  # December 08, 2022
-)
-
-go_repository(
-    name = "com_github_mitchellh_mapstructure",
-    importpath = "github.com/mitchellh/mapstructure",
-    tag = "v1.5.0",  # April 20, 2022
-)
-
-go_repository(
-    name = "com_github_pelletier_go_toml",
-    importpath = "github.com/pelletier/go-toml",
-    strip_prefix = "go-toml-1.9.5",
-    urls = ["https://github.com/pelletier/go-toml/archive/refs/tags/v1.9.5.tar.gz"],  # April 21, 2022
-)
-
-go_repository(
-    name = "com_github_pelletier_go_toml_v2",
-    importpath = "github.com/pelletier/go-toml/v2",
-    strip_prefix = "go-toml-2.0.6",
-    urls = ["https://github.com/pelletier/go-toml/archive/refs/tags/v2.0.6.tar.gz"],  # November 16, 2022
-)
-
-go_repository(
-    name = "com_github_pmezard_go_difflib",
-    importpath = "github.com/pmezard/go-difflib",
-    tag = "v1.0.0",  # Aug 8, 2016
-)
-
-go_repository(
-    name = "in_gopkg_yaml_v2",
-    importpath = "gopkg.in/yaml.v2",
-    tag = "v2.4.0",  # November 17, 2020
-)
-
-go_repository(
-    name = "in_gopkg_yaml_v3",
-    importpath = "gopkg.in/yaml.v3",
-    tag = "v3.0.1",  # May 27, 2022
-)
-
-go_repository(
-    name = "com_github_fsnotify_fsnotify",
-    importpath = "github.com/fsnotify/fsnotify",
-    tag = "v1.6.0",  # October 12, 2022
-)
-
-# Needed by //a17/backend/common/auth0
-go_repository(
-    name = "com_github_mendsley_gojwk",
-    commit = "4d5ec6e58103388d6cb0d7d72bc72649be4f0504",  # December 17, 2014
-    importpath = "github.com/mendsley/gojwk",
-)
-
-# Needed by //a17/backend/common/kubemq
-go_repository(
-    name = "com_github_kubemq_io_kubemq_go",
-    commit = "4b4e96da5642194ba6ebba0dd3acc70f92240788",  # August 21, 2021
-    importpath = "github.com/kubemq-io/kubemq-go",
-)
-
-go_repository(
-    name = "com_github_gorilla_websocket",
-    commit = "b65e62901fc1c0d968042419e74789f6af455eb9",  # March 19, 2020
-    importpath = "github.com/gorilla/websocket",
-)
-
-go_repository(
-    name = "com_github_go_resty_resty_v2",
-    importpath = "github.com/go-resty/resty/v2",
-    sum = "h1:me+K9p3uhSmXtrBZ4k9jcEAfJmuC8IivWHwaLZwPrFY=",
-    version = "v2.7.0",  # November 3, 2021
-)
-
-go_repository(
-    name = "com_github_kubemq_io_protobuf",
-    commit = "cbaa3b00e2ea2f9f45dba49c6aaa28281d8b2e76",  # May 27, 2021
-    importpath = "github.com/kubemq-io/protobuf",
-)
-
-go_repository(
-    name = "com_github_nats_io_nuid",
-    commit = "4b96681fa6d28dd0ab5fe79bac63b3a493d9ee94",  # April 9, 2019
-    importpath = "github.com/nats-io/nuid",
-)
-
-go_repository(
-    name = "org_uber_go_atomic",
-    commit = "12f27ba2637fa0e13772a4f05fa46a5d18d53182",  # September 14, 2020
-    importpath = "go.uber.org/atomic",
-)
-
-go_repository(
-    name = "com_github_gogo_protobuf",
-    importpath = "github.com/gogo/protobuf",
-    version = "v1.3.2",  # January 10, 2021
-)
-
-# Needed by //a17/backend/common/logging
-go_repository(
-    name = "com_github_getsentry_raven_go",
-    importpath = "github.com/getsentry/raven-go",
-    tag = "v0.2.0",  # November 28, 2018
-    # TODO (cdelguercio): migrate to sentry-go
-)
-
-go_repository(
-    name = "com_github_pkg_errors",
-    importpath = "github.com/pkg/errors",
-    tag = "v0.9.1",  # January 14, 2020
-)
-
-go_repository(
-    name = "com_github_certifi_gocertifi",
-    importpath = "github.com/certifi/gocertifi",
-    tag = "2021.04.29",
-)
-
-# Needed by //a17/backend/common/middleware
-go_repository(
-    name = "com_github_golang_jwt_jwt",
-    importpath = "github.com/golang-jwt/jwt/v5",
-    sum = "h1:1n1XNM9hk7O9mnQoNBGolZvzebBQ7p93ULHRc28XJUE=",
-    version = "v5.0.0",  # April 17, 2023
-)
-
-# Needed by //a17/backend/common/pubsub
-go_repository(
-    name = "com_google_cloud_go",
-    importpath = "cloud.google.com/go",
-    tag = "v0.108.0",  # January 05, 2023
-)
-
-go_repository(
-    name = "org_golang_google_api",
-    commit = "ac7eb8f2e54c91697b33971d184eb155867cf1a2",  # January 04, 2023
-    importpath = "google.golang.org/api",
-)
-
-go_repository(
-    name = "com_github_googleapis_enterprise_certificate_proxy_client",
-    importpath = "github.com/googleapis/enterprise-certificate-proxy",
-    tag = "v0.2.1",  # December 6, 2022
-)
-
-go_repository(
-    name = "org_golang_x_sync",
-    importpath = "golang.org/x/sync",
-    tag = "v0.1.0",  # September 29, 2022
-)
-
-go_repository(
-    name = "org_golang_x_oauth2",
-    importpath = "golang.org/x/oauth2",
-    tag = "v0.4.0",  # January 04, 2023
-)
-
-go_repository(
-    name = "org_golang_x_oauth2_google",
-    importpath = "golang.org/x/oauth2",
-    tag = "v0.4.0",  # January 04, 2023
-)
-
-go_repository(
-    name = "io_opencensus_go",
-    importpath = "go.opencensus.io",
-    tag = "v0.24.0",  # November 03, 2022
-)
-
-go_repository(
-    name = "com_github_golang_groupcache",
-    commit = "41bb18bfe9da5321badc438f91158cd790a33aa3",  # March 23, 2021
-    importpath = "github.com/golang/groupcache",
-)
-
-go_repository(
-    name = "com_github_googleapis_gax_go",
-    importpath = "github.com/googleapis/gax-go",
-    tag = "v2.7.0",  # November 02, 2022
-)
-
-# Needed by //a17/backend/commmon/rabbitmq
-go_repository(
-    name = "com_github_rabbitmq_ampq091_go",
-    importpath = "github.com/rabbitmq/amqp091-go",
-    sum = "h1:GBFy5PpLQ5jSVVSYv8ecHGqeX7UTLYR4ItQbDCss9MM=",
-    version = "v1.8.0",  # March 21, 2023
-)
-
-# Needed by //a17/backend/common/redis
-go_repository(
-    name = "com_github_bsm_redislock",
-    importpath = "github.com/bsm/redislock",
-    sum = "h1:osmvugkXGiLDEhzUPdM0EUtKpTEgLLuli4Ky2Z4vx38=",
-    version = "v0.9.3",  # April 27, 2023
-)
-
-go_repository(
-    name = "com_github_redis_go_redis_v9",
-    importpath = "github.com/redis/go-redis/v9",
-    sum = "h1:FC82T+CHJ/Q/PdyLW++GeCO+Ol59Y4T7R4jbgjvktgc=",
-    version = "v9.0.4",  # May 1, 2023
-)
-
-go_repository(
-    name = "github_com_cespare_xxhash_v2",
-    importpath = "github.com/cespare/xxhash/v2",
-    sum = "h1:DC2CZ1Ep5Y4k3ZQ899DldepgrayRUGE6BBZ/cd9Cj44=",
-    version = "v2.2.0",  # December 3, 2022
-)
-
-go_repository(
-    name = "com_github_dgryski_go_rendezvous",
-    commit = "9f7001d12a5f0021fd3283525f888b5814ccee27",  # August 22, 2020
-    importpath = "github.com/dgryski/go-rendezvous",
-)
-
-# Needed by //a17/backend/common/sds
-go_repository(
-    name = "com_github_robfig_cron",
-    commit = "2315d5715e36303a941d907f038da7f7c44c773b",  # November 1, 2017
-    importpath = "github.com/robfig/cron",
-)
-
-# Needed by com_github_robfig_cron.
-go_repository(
-    name = "com_github_hallas_stacko",
-    commit = "f35fc1c0582692ba9aef59e275f0230c0992f9ae",  # August 23, 2014
-    importpath = "github.com/hallas/stacko",
-)
-
-# Needed by //a17/backend/common/server
-go_repository(
-    name = "grpc_ecosystem_grpc_gateway",
-    importpath = "github.com/grpc-ecosystem/grpc-gateway/v2",
-    version = "v2.15.0",  # July 28, 2023
-)
-
-go_repository(
-    name = "com_github_kazegusuri_grpc_panic_handler",
-    commit = "093ec776affc30d46930f0ecb6ff6f41e2e04182",  # May 2, 2016
-    importpath = "github.com/kazegusuri/grpc-panic-handler",
-)
-
-go_repository(
-    name = "com_github_soheilhy_cmux",
-    importpath = "github.com/soheilhy/cmux",
-    tag = "v0.1.5",  # March 26, 2021
-)
-
-go_repository(
-    name = "com_github_golang_glog",
-    importpath = "github.com/golang/glog",
-    tag = "v1.0.0",  # August 20, 2021
-)
-
-# Needed by //a17/backend/common/storage
-go_repository(
-    name = "com_github_aws_aws_sdk_go_v2",
-    importpath = "github.com/aws/aws-sdk-go-v2",
-    tag = "release-2023-01-09",  # January 09, 2023
-)
-
-go_repository(
-    name = "com_github_aws_aws_sdk_go_v2_config",
-    importpath = "github.com/aws/aws-sdk-go-v2/config",
-    tag = "release-2023-01-05",  # January 05, 2023
-)
-
-go_repository(
-    name = "com_github_aws_aws_sdk_go_v2_service_s3",
-    importpath = "github.com/aws/aws-sdk-go-v2/service/s3",
-    tag = "release-2023-01-05",  # January 05, 2023
-)
-
-go_repository(
-    name = "com_github_aws_smithy_go",
-    importpath = "github.com/aws/smithy-go",
-    tag = "release-2022-12-02",  # December 02, 2022
-)
-
-# Needed by com_github_aws_aws_sdk_go_v2
-go_repository(
-    name = "com_github_jmespath_go_jmespath",
-    commit = "3d4fd11601ddca248480565884e34e393313cd62",  # September 18, 2020
-    importpath = "github.com/jmespath/go-jmespath",
-)
-
-# Needed by //a17/backend/common/timeseries
-go_repository(
-    name = "com_github_aws_aws_sdk_go_v2_service_timeseriesquery",
-    importpath = "github.com/aws/aws-sdk-go-v2/service/timeseriesquery",
-    tag = "release-2023-06-08",  # June 08, 2023
-)
-
-# Needed by //a17/backend/docker/service/buildJWKS.go
-go_repository(
-    name = "com_github_lestrrat_go_jwx_v2",
-    importpath = "github.com/lestrrat-go/jwx",
-    tag = "v2.0.16",  # October 30, 2023
-)
-
-go_repository(
-    name = "com_github_lestrrat_go_option",
-    importpath = "github.com/lestrrat-go/option",
-    tag = "v1.0.1",  # December 15, 2022
-)
-
-go_repository(
-    name = "com_github_lestrrat_go_iter",
-    importpath = "github.com/lestrrat-go/iter",
-    tag = "v1.0.2",  # March 28, 2022
-)
-
-go_repository(
-    name = "com_github_lestrrat_go_blackmagic",
-    importpath = "github.com/lestrrat-go/blackmagic",
-    tag = "v1.0.2",  # November 7, 2022
-)
-
-go_repository(
-    name = "com_github_lestrrat_go_httprc",
-    importpath = "github.com/lestrrat-go/httprc",
-    tag = "v1.0.4",  # July 18, 2022
-)
-
-go_repository(
-    name = "com_github_lestrrat_go_httpcc",
-    importpath = "github.com/lestrrat-go/httpcc",
-    tag = "v1.0.1",  # March 28, 2022
-)
-
-# ------------------------------------------------------------------------------
 http_archive(
     name = "com_github_OctoMap_octomap",
     build_file = "//third_party:octomap.BUILD",
@@ -694,9 +178,9 @@ bind(
 http_archive(
     name = "eigen_archive",
     build_file = "//third_party:eigen.BUILD",
-    sha256 = "94878cbfa27b0d0fbc64c00d4aafa137f678d5315ae62ba4aecddbd4269ae75f",
-    strip_prefix = "eigen-eigen-67e894c6cd8f",
-    urls = ["https://bitbucket.org/eigen/eigen/get/3.3.3.tar.gz"],
+    sha256 = "858695738f7d9414ca20defa2b4b0163305c102a1d4b6b6683f23a4a25d8869c",
+    strip_prefix = "eigen-3.4.0",
+    urls = ["https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz"],
 )
 
 bind(
@@ -708,9 +192,9 @@ bind(
 http_archive(
     name = "eigen_restricted_archive",
     build_file = "//third_party:eigen_restricted.BUILD",
-    sha256 = "94878cbfa27b0d0fbc64c00d4aafa137f678d5315ae62ba4aecddbd4269ae75f",
-    strip_prefix = "eigen-eigen-67e894c6cd8f",
-    urls = ["https://bitbucket.org/eigen/eigen/get/3.3.3.tar.gz"],
+    sha256 = "858695738f7d9414ca20defa2b4b0163305c102a1d4b6b6683f23a4a25d8869c",
+    strip_prefix = "eigen-3.4.0",
+    urls = ["https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz"],
 )
 
 bind(
@@ -722,9 +206,9 @@ bind(
 http_archive(
     name = "com_github_sandstorm_io_capnproto",
     build_file = "//third_party:capnproto.BUILD",
-    sha256 = "85210424c09693d8fe158c1970a2bca37af3a0424f02b263f566a1b8a5451a2d",
-    strip_prefix = "capnproto-0.6.1",
-    urls = ["https://github.com/sandstorm-io/capnproto/archive/v0.6.1.tar.gz"],
+    sha256 = "2992576f776c52a91266c26d2460d3d5f5737d266e7441865df19f54f48b0c0a",
+    strip_prefix = "capnproto-0.8.0",
+    urls = ["https://github.com/capnproto/capnproto/archive/refs/tags/v0.8.0.tar.gz"],
 )
 
 bind(
@@ -746,6 +230,19 @@ bind(
 )
 
 http_archive(
+    name = "cppzmq_archive",
+    build_file = "//third_party:cppzmq.BUILD",
+    sha256 = "7592759e3b08b1a459b20e03ab9720a221f7e078f4a66e44b5f8541e42b2c4e6",
+    strip_prefix = "cppzmq-4.2.1",
+    urls = ["https://github.com/zeromq/cppzmq/archive/v4.2.1.tar.gz"],
+)
+
+bind(
+    name = "cppzmq",
+    actual = "@cppzmq_archive//:cppzmq",
+)
+
+http_archive(
     name = "util_linux_archive",
     build_file = "//third_party:util_linux.BUILD",
     sha256 = "2baabb17419faaf8325792b2bb02353078128dfa42b41b09f23e0ced011c8b6d",
@@ -761,9 +258,9 @@ bind(
 http_archive(
     name = "spdlog_archive",
     build_file = "//third_party:spdlog.BUILD",
-    sha256 = "d798a6ca19165f0a18a43938859359269f5a07fd8e0eb83ab8674739c9e8f361",
-    strip_prefix = "spdlog-0.13.0",
-    urls = ["https://github.com/gabime/spdlog/archive/v0.13.0.tar.gz"],
+    sha256 = "5514f7756f7e4566c1b3531b1afe252f534be94b01e4a52055627685600f6b49",
+    strip_prefix = "spdlog-0.12.0",
+    urls = ["https://github.com/gabime/spdlog/archive/v0.12.0.tar.gz"],
 )
 
 bind(
@@ -774,14 +271,74 @@ bind(
 http_archive(
     name = "azmq_archive",
     build_file = "//third_party:azmq.BUILD",
-    sha256 = "42a2409fd471299841f83f5d50f5147914ea44165eae0c42d4a7cc6fbc8161a1",
-    strip_prefix = "azmq-f1108af7cb0982c95f3c55ea73aab82345d97671",
-    urls = ["https://github.com/zeromq/azmq/archive/f1108af7cb0982c95f3c55ea73aab82345d97671.tar.gz"],
+    sha256 = "5a588b7762a48cca70a1c1d81747c355c3c0f6f663c11451f2f84b7a13e2f75a",
+    strip_prefix = "azmq-1.0.3",
+    urls = ["https://github.com/zeromq/azmq/archive/v1.0.3.tar.gz"],
 )
 
 bind(
     name = "azmq",
     actual = "@azmq_archive//:azmq",
+)
+
+http_archive(
+    name = "sodium_archive",
+    build_file = "//third_party:sodium.BUILD",
+    sha256 = "4d1b824f94b304033230a11545633a696a0904014f3d1323605282255740422c",
+    strip_prefix = "libsodium-1.0.10",
+    urls = ["https://github.com/jedisct1/libsodium/archive/1.0.10.tar.gz"],
+)
+
+bind(
+    name = "sodium",
+    actual = "@sodium_archive//:sodium",
+)
+
+http_archive(
+    name = "xerces_archive",
+    build_file = "//third_party:xerces.BUILD",
+    sha256 = "b75f56c547805950d24e9411295b65101a073f8373e3519b5d3c81e9f291350a",
+    strip_prefix = "xerces-c-3.1.3",
+    urls = ["https://archive.apache.org/dist/xerces/c/3/sources/xerces-c-3.1.3.tar.gz"],
+)
+
+bind(
+    name = "xerces",
+    actual = "@xerces_archive//:xerces",
+)
+
+http_archive(
+    name = "googletest_archive",
+    build_file = "//third_party:googletest.BUILD",
+    sha256 = "9846337525b64267e72152a51a2a4b81c2f1f3e7952a1d2e2b34914104032d84",
+    strip_prefix = "googletest-release-1.8.0",
+    urls = ["https://github.com/google/googletest/archive/release-1.8.0.tar.gz"],
+)
+
+bind(
+    name = "googletest",
+    actual = "@googletest_archive//:gtest",
+)
+
+# git_repository(
+#     name = "catch_archive",
+#     build_file = "//third_party:catch.BUILD",
+#     branch = "master",
+#     remote = "https://github.com/catchorg/Catch2.git",
+# )
+
+http_archive(
+    name = "catch_archive",
+    # This attribute IS valid for http_archive in Bazel 5.4.1
+    build_file = "//third_party:catch.BUILD",
+    sha256 = "524f4693a7d18e24749f5a4325c613fe82b853a1656c1ce89b25f49896dc4047",
+    strip_prefix = "Catch2-f87b475df8a73a388556e409b3b83870b28e6c4e",
+    urls = ["https://github.com/catchorg/Catch2/archive/f87b475df8a73a388556e409b3b83870b28e6c4e.tar.gz"],
+)
+
+bind(
+    name = "catch",
+    actual = "@catch_archive//:catch",
 )
 
 # TODO(curtismuntz): This is actually unused unless specifically called... Do we need this at all?

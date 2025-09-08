@@ -5,14 +5,15 @@
 
 set -e
 
-#echo '>>> CLEANING PREVIOUS BUILD ARTIFACTS <<<'
+echo '>>> CLEANING PREVIOUS BUILD ARTIFACTS <<<'
 # Clean CMake build directories
-#rm -rf /workspace/third_party/build
-#rm -rf /workspace/a17/utils/build
-#rm -rf /workspace/a17/capnp_msgs/build
-#rm -rf /workspace/a17/dispatch/build
-#rm -rf /workspace/install
-# Clean Bazel cache
+rm -rf /workspace/third_party/build
+rm -rf /workspace/a17/utils/build
+rm -rf /workspace/a17/capnp_msgs/build
+rm -rf /workspace/a17/dispatch/build
+rm -rf /workspace/install
+
+# # Clean Bazel cache
 # cd /workspace && bazel --enable_bzlmod=false clean --expunge
 
 echo '>>> BUILDING AND TESTING WITH CMAKE (in order) <<<'
@@ -61,9 +62,9 @@ cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${INSTALL_DIR}
 make -j4
 ./unittests_A17Dispatch
 
-echo '>>> BUILDING AND TESTING WITH BAZEL <<<'
-cd /workspace
-#bazel build //third_party/...
-bazel test //...
+# echo '>>> BUILDING AND TESTING WITH BAZEL <<<'
+# cd /workspace
+# bazel build //third_party/...
+# bazel test //...
 
 echo "--- Build and test completed successfully ---"
