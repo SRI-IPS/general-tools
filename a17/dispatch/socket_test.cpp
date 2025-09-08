@@ -78,7 +78,7 @@ TEST_CASE("Discovery", "[socket]") {
 }
 
 TEST_CASE("IPC", "[socket]") {
-  a17::dispatch::Address address("ipc", "test_pub");
+  a17::dispatch::Address address("ipc", "/tmp/dispatch_ipc_test");
   a17::utils::BufferPool pool;
 
   std::thread t1([&]() {
