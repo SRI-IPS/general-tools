@@ -1,18 +1,10 @@
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+set(CMAKE_CXX_STANDARD 14)
 
 project(A17Maths VERSION 0.1.0 LANGUAGES CXX)
 
-# Set C++ standard
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Add the custom cmake module path for finding dependencies.
-# For backward compatibility, we first check for the A17_ROOT environment variable.
 if(DEFINED ENV{A17_ROOT})
-  # include("$ENV{A17_ROOT}/cmake/A17DefaultPaths.cmake")
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{A17_ROOT}/cmake")
-else()
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../../cmake")
+  include("$ENV{A17_ROOT}/cmake/A17DefaultPaths.cmake")
 endif()
 
 # Needed for MacOS compatibility. This allows the installed library to be linked against from
@@ -45,11 +37,8 @@ file(GLOB python_src_files "*.py")
 
 # ------------------------------------------------------------------------------
 # Import dependencies
-##configure_file("cmake/Deps.cmake.in" "${deps_config}" @ONLY)
-##include("${deps_config}")
-find_package(Eigen3 REQUIRED)
-find_package(Catch REQUIRED)
-
+configure_file("cmake/Deps.cmake.in" "${deps_config}" @ONLY)
+include("${deps_config}")
 
 # ------------------------------------------------------------------------------
 # maths lib
@@ -58,7 +47,7 @@ target_include_directories(maths INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:${include_install_dir}>)
 target_link_libraries(maths INTERFACE
-  Eigen3::Eigen)
+  eigen3)
 install(TARGETS maths
   EXPORT "${targets_export_name}"
   ARCHIVE DESTINATION "lib"
@@ -85,7 +74,7 @@ target_include_directories(matrix_utils INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:${include_install_dir}>)
 target_link_libraries(matrix_utils INTERFACE
-  Eigen3::Eigen)
+  eigen3)
 install(TARGETS matrix_utils
   EXPORT "${targets_export_name}"
   ARCHIVE DESTINATION "lib"
@@ -124,15 +113,15 @@ add_executable(${TEST_NAME}
   "unittests_main.cpp")
 target_include_directories(${TEST_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-  $<BUILD_INTERFACE:${workspace_root}>) # For a17/utils, etc.
-target_link_libraries(${TEST_NAME} PRIVATE
+  $<BUILD_INTERFACE:${workspace_root}>)
+target_link_libraries(${TEST_NAME}
   angle_utils
   catch
-  Eigen3::Eigen)
+  eigen3)
 
 # ------------------------------------------------------------------------------
 # Unit tests
-include(CTest)
+enable_testing()
 add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 
 # ------------------------------------------------------------------------------
