@@ -1,5 +1,9 @@
 #include <sstream>
 #include <spdlog/spdlog.h>
+#include <spdlog/common.h>
+#if SPDLOG_VERSION >= 10000
+  #include <spdlog/sinks/stdout_color_sinks.h>
+#endif
 #include "publisher.h"
 #include "socket.h"
 #include "message_helpers.h"

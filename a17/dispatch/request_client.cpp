@@ -38,6 +38,7 @@ RequestClient::RequestClient(boost::asio::io_service &ios, Directory &directory,
 
 RequestClient::~RequestClient() { directory_->unobserve(topic_name_, topic_observer_ref_); }
 
+// TODO (adas): For Boost 1.66+ timeout argument needs to be an integer
 boost::system::error_code RequestClient::request(const azmq::message_vector &message,
                                                  SmartMessageHandler reply_handler,
                                                  ErrorHandler error_handler, float timeout) {
@@ -60,7 +61,8 @@ boost::system::error_code RequestClient::request(const azmq::message_vector &mes
   socket_->receive(bind1(&RequestClient::sendReplyToHandler), error_handler);
   waiting_for_receive_ = true;
   if (timeout > 0) {
-    timeout_timer_.expires_from_now(boost::posix_time::seconds(timeout));
+    // For Boost 1.66+ timeout needs to be converted to integer
+    timeout_timer_.expires_from_now(boost::posix_time::seconds(int(timeout)));
     timeout_timer_.async_wait([this, timeout, error_handler](const boost::system::error_code &ec) {
       if (ec == boost::asio::error::operation_aborted) {
         return;

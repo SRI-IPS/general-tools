@@ -10,6 +10,10 @@
 #include "directory.h"
 #include "publisher.h"
 
+#if SPDLOG_VERSION >= 10000
+  #include <spdlog/sinks/stdout_color_sinks.h>
+#endif
+
 #define FROM_CAP_HEX(c) ((isdigit(c) ? (c) - '0' : (c) + 10 - 'A'))
 
 namespace a17 {

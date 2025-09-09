@@ -1,0 +1,14 @@
+if(NOT TARGET capnproto)
+  find_package(capnproto REQUIRED)
+  add_library(capnproto INTERFACE IMPORTED)
+  set_target_properties(capnproto PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CAPNPROTO_INCLUDE_DIRS}"
+    INTERFACE_LINK_LIBRARIES "${CAPNPROTO_LIBRARIES}")
+endif()
+
+if(NOT TARGET eigen3)
+  find_package(Eigen3 REQUIRED)
+  add_library(eigen3 INTERFACE IMPORTED)
+  set_target_properties(eigen3 PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${EIGEN3_INCLUDE_DIR}")
+endif()

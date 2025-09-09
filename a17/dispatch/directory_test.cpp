@@ -35,7 +35,7 @@ TEST_CASE("Query topic", "[directory]") {
                    {"17488419364809454706"}, directory1.guid());
 
     boost::asio::deadline_timer timer(ios1);
-    timer.expires_from_now(boost::posix_time::seconds(1.0));
+    timer.expires_from_now(boost::posix_time::seconds(1));
     timer.async_wait([&](const boost::system::error_code &ec) { ios1.stop(); });
 
     ios1.run();

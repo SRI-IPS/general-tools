@@ -21,7 +21,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # build third_party
 add_subdirectory( mav_trajectory_generation )
-add_subdirectory( occmapping )
+#add_subdirectory( occmapping )
 add_subdirectory( Catch )
 add_subdirectory( ewok )
 add_subdirectory( gohlke )

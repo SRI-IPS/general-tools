@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <netinet/in.h>
 #include <spdlog/spdlog.h>
+#include <spdlog/common.h>
 #include <string>
 #include <stdint.h>
 

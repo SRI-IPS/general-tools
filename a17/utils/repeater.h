@@ -1,6 +1,8 @@
 #pragma once
 
 #include <boost/asio/basic_waitable_timer.hpp>
+// Needed for boost 1.66+
+#include <boost/asio/io_service.hpp> 
 #include <chrono>
 
 namespace a17 {

@@ -5,6 +5,10 @@
 #include <string>
 
 #include <spdlog/spdlog.h>
+#include <spdlog/common.h>
+#if SPDLOG_VERSION >= 10000
+  #include <spdlog/sinks/stdout_color_sinks.h>
+#endif
 #include <boost/asio/signal_set.hpp>
 
 #include "a17/utils/buffer_pool.h"
