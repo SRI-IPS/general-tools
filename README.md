@@ -1,5 +1,7 @@
 # A17 Tools - C++ and Python Libraries
 
+[![C++ and Python CI](https://github.com/SRI-IPS/general-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/SRI-IPS/general-tools/actions/workflows/ci.yml)
+
 This repository contains a collection of C++ and Python libraries designed for building robust, high-performance distributed systems. The core component is **`dispatch`**, a powerful messaging and service discovery middleware.
 
 ## Key Components
