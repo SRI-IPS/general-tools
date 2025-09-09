@@ -7,10 +7,7 @@ FROM ubuntu:20.04
 # Avoid prompts from apt during installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Define Bazelisk version to install
-ARG BAZELISK_VERSION=v1.19.0
-
-# Install base dependencies and build tools.
+# Install base dependencies, build tools, and Bazelisk.
 # We will install Bazel using Bazelisk instead of apt.
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -22,13 +19,12 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     libboost-all-dev \
     # For Bazelisk download
-    unzip \
+    unzip && \
+    # Install Bazelisk, which will read .bazelversion and use the correct Bazel version
+    wget https://github.com/bazelbuild/bazelisk/releases/download/v1.19.0/bazelisk-linux-amd64 -O /usr/local/bin/bazel && \
+    chmod +x /usr/local/bin/bazel && \
     # Clean up apt lists to reduce image size
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Bazelisk, which will read .bazelversion and use the correct Bazel version
-RUN wget https://github.com/bazelbuild/bazelisk/releases/download/${BAZELISK_VERSION}/bazelisk-linux-amd64 -O /usr/local/bin/bazel \
-    && chmod +x /usr/local/bin/bazel
+    rm -rf /var/lib/apt/lists/*
 
 # Copy and run the dependency installation script
 COPY install_apt_dependencies.sh /usr/local/bin/install_apt_dependencies.sh
@@ -39,12 +35,6 @@ RUN chmod +x /usr/local/bin/install_apt_dependencies.sh && \
 # Install Python dependencies from requirements file
 COPY requirements.txt /tmp/requirements.txt
 RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
-
-# Create a non-root user to match the host user, avoiding file permission issues.
-# The user ID and group ID will be passed in during the build.
-ARG UID=1000
-ARG GID=1000
-RUN groupadd -g $GID user && useradd -u $UID -g $GID -ms /bin/bash user
 
 # Set final working directory for the container
 WORKDIR /workspace

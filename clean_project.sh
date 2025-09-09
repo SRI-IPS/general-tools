@@ -15,4 +15,4 @@ rm -rf "${A17_ROOT}/a17/dispatch/build"
 rm -rf "${A17_ROOT}/install"
 
 # Clean Bazel cache
-cd "${A17_ROOT}" && bazel clean --expunge
+cd "${A17_ROOT}" && bazel --output_user_root=/tmp/bazel_output clean --expunge
