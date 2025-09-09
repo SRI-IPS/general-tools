@@ -31,9 +31,9 @@ You will need the following libraries installed:
 
 The project provides two scripts for handling these prerequisites inside the development environment:
 
-1.  **`install_dependencies.sh` (Recommended for Reproducibility)**: This script downloads and builds specific, tested versions of each library from source. This is the method used for CI and guarantees a consistent build. The versions are: `libsodium-1.0.10`, `zeromq-4.2.2`, `capnproto-0.8.0`, `gflags-2.2.1`, `glog-0.3.5`, `spdlog-0.12.0`, `eigen-3.4.0`.
+1. **`install_dependencies.sh` (Recommended for Reproducibility)**: This script downloads and builds specific, tested versions of each library from source. This is the method used for CI and guarantees a consistent build. The versions are: `libsodium-1.0.10`, `zeromq-4.2.2`, `capnproto-0.8.0`, `gflags-2.2.1`, `glog-0.3.5`, `spdlog-0.12.0`, `eigen-3.4.0`.
 
-2.  **`install_apt_dependencies.sh` (For System Integration)**: This script installs the versions available in the standard Ubuntu 20.04 `apt` repositories. These versions may be newer or older than the source-built ones but are generally compatible. This method is faster but less reproducible.
+2. **`install_apt_dependencies.sh` (For System Integration)**: This script installs the versions available in the standard Ubuntu 20.04 `apt` repositories. These versions may be newer or older than the source-built ones but are generally compatible. This method is faster but less reproducible.
 
 ### Python Dependencies
 
@@ -74,7 +74,7 @@ This script will build all components and place the final libraries and headers 
 After a successful build using `build_project.sh`, the required libraries and Python modules will be in the `/workspace/install` directory. To run applications that use `dispatch`, you may need to update your environment variables:
 
 ```bash
-export PYTHONPATH=/workspace/install/lib/python3.8/site-packages:$PYTHONPATH
+export PYTHONPATH=/workspace/install/py:$PYTHONPATH
 export LD_LIBRARY_PATH=/workspace/install/lib:$LD_LIBRARY_PATH
 ```
 
