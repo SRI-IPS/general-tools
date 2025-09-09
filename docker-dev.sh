@@ -3,10 +3,9 @@ set -e
 
 IMAGE_NAME="a17-tools-dev"
 
-# Check if the Docker image exists
+# Check if the Docker image exists (same as before)
 if [[ "$(docker images -q ${IMAGE_NAME}:latest 2> /dev/null)" == "" ]]; then
   echo "Docker image '${IMAGE_NAME}' not found. Building..."
-  # The Dockerfile is now self-contained and doesn't require external build-args.
   docker build -t ${IMAGE_NAME} -f Dockerfile .
   echo "Docker image built successfully."
 fi
@@ -14,14 +13,21 @@ fi
 echo "Starting development container. Your project directory is mounted at /workspace."
 echo "To exit the container, type 'exit'."
 
-# Start the container
+# This is the new, more advanced run command
+# It will create a user inside the container that matches your host user
 docker run -it --rm \
   -v "$(pwd)":/workspace:z \
   -w /workspace \
-  --user "$(id -u):$(id -g)" \
-  -e HOME=/workspace \
-  -e USER="$USER" \
-  ${IMAGE_NAME} \
-  /bin/bash
-
+  -e HOST_UID=$(id -u) \
+  -e HOST_GID=$(id -g) \
+  ${IMAGE_NAME} /bin/bash -c '
+    # Create a group and user on the fly with the host's IDs
+    groupadd -f -g $HOST_GID user
+    useradd -o -u $HOST_UID -g $HOST_GID -s /bin/bash -m user
+    
+    # Switch to the newly created user and start a shell
+    export HOME=/home/user
+    exec su user
+  '
+  
 echo "Exited development container."
