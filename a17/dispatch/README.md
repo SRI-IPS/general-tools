@@ -18,33 +18,37 @@
 You will need the following libraries installed:
 
 * **Boost** (System dependency, requires components: `system`, `regex`, `asio`)
-* **libsodium** (`1.0.10`)
-* **ZeroMQ** (libzmq `4.2.2`) - Note: Requires **libsodium** for CURVE security features.
-* **cppzmq** (`4.2.1`, header-only)
-* **azmq** (`v1.0.3`, header-only)
-* **Cap'n Proto** (`0.8.0`)
-* **gflags** (`2.2.1`)
-* **glog** (`0.3.5`)
-* **spdlog** (`0.12.0`)
-* **Eigen** (`3.4.0`, header-only)
-* **Catch** (Included in `third_party` for tests)
+* **libsodium**
+* **ZeroMQ** (libzmq) - Note: Requires **libsodium** for CURVE security features.
+* **cppzmq** (Header-only ZeroMQ C++ bindings)
+* **azmq** (Header-only Boost.Asio integration for ZeroMQ)
+* **Cap'n Proto** (capnp, capnpc)
+* **gflags**
+* **glog**
+* **spdlog**
+* **Eigen** (Header-only)
+* **Catch** (Included in `third_party` for unit tests)
 
-The project provides scripts to install these dependencies from source (`install_dependencies.sh`) or from system packages (`install_apt_dependencies.sh`). For a reproducible build, using the source build script is recommended.
+The project provides two scripts for handling these prerequisites inside the development environment:
+
+1.  **`install_dependencies.sh` (Recommended for Reproducibility)**: This script downloads and builds specific, tested versions of each library from source. This is the method used for CI and guarantees a consistent build. The versions are: `libsodium-1.0.10`, `zeromq-4.2.2`, `capnproto-0.8.0`, `gflags-2.2.1`, `glog-0.3.5`, `spdlog-0.12.0`, `eigen-3.4.0`.
+
+2.  **`install_apt_dependencies.sh` (For System Integration)**: This script installs the versions available in the standard Ubuntu 20.04 `apt` repositories. These versions may be newer or older than the source-built ones but are generally compatible. This method is faster but less reproducible.
 
 ### Python Dependencies
 
-The Python dependencies are listed in the `requirements.txt` file at the root of the repository. Key runtime dependencies include:
+All Python dependencies for the project are listed in the `requirements.txt` file at the root of the repository. Key runtime dependencies for `dispatch` include:
 
-* `pycapnp` (`0.6.4`)
+* `pycapnp`
 * `pyzmq`
-* `tornado` (`6.1`)
-* `netifaces` (`0.10.6`)
-* `numpy` (`1.19.5`)
+* `tornado`
+* `netifaces`
+* `numpy`
 
-You can install these using pip:
+You can install all required Python packages using `pip`. From the `/workspace` directory inside the development container, run:
 
-```sh
-pip install pycapnp pyzmq tornado netifaces
+```bash
+pip install -r /workspace/requirements.txt
 ```
 
 ## Building
@@ -55,7 +59,7 @@ All build commands below should be run from the `/workspace` directory inside th
 
 ### Building with CMake
 
-This is the primary build method used by the project. The `build_project.sh` script orchestrates the build of all components in the correct order.
+This is the primary build method. The `build_project.sh` script orchestrates the build of all components in the correct order.
 
 To build and test `dispatch` along with all its internal dependencies (`a17-utils`, `a17-capnp_msgs`, etc.), run the main build script from the workspace root:
 
