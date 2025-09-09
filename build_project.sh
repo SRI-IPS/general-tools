@@ -1,22 +1,13 @@
 #!/bin/bash
 #
-# This script builds and tests all CMake and Bazel components.
+# This script builds and tests all CMake components in the correct order.
 # It is designed to be run INSIDE the Docker container.
 
 set -e
 
-echo '>>> CLEANING PREVIOUS BUILD ARTIFACTS <<<'
-# Clean CMake build directories
-rm -rf /workspace/third_party/build
-rm -rf /workspace/a17/utils/build
-rm -rf /workspace/a17/capnp_msgs/build
-rm -rf /workspace/a17/dispatch/build
-rm -rf /workspace/install
-
-# # Clean Bazel cache
-# cd /workspace && bazel --enable_bzlmod=false clean --expunge
-
 echo '>>> BUILDING AND TESTING WITH CMAKE (in order) <<<'
+echo '--- Cleaning previous build artifacts ---'
+./clean_project.sh
 
 # 1. Create a local directory to install libraries into
 INSTALL_DIR=/workspace/install
@@ -62,9 +53,4 @@ cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${INSTALL_DIR}
 make -j4
 ./unittests_A17Dispatch
 
-# echo '>>> BUILDING AND TESTING WITH BAZEL <<<'
-# cd /workspace
-# bazel build //third_party/...
-# bazel test //...
-
-echo "--- Build and test completed successfully ---"
+echo "--- CMake build and test completed successfully ---"

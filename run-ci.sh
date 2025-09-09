@@ -21,6 +21,10 @@ fi
 echo "--- Running CI build and tests inside Docker container ---"
 
 # Run the commands non-interactively inside the container
-docker run --rm -v "$(pwd)":/workspace -w /workspace --user $(id -u):$(id -g) ${IMAGE_NAME} /bin/bash -c "/workspace/build_project.sh"
+docker run --rm -v "$(pwd)":/workspace -w /workspace --user $(id -u):$(id -g) ${IMAGE_NAME} /bin/bash -c "
+  /workspace/build_project.sh
+  # To run the bazel build as well, uncomment the following line:
+  # /workspace/build_bazel.sh
+"
 
 echo "--- CI run completed successfully ---"
