@@ -8,12 +8,36 @@ on:
 
 jobs:
   build-and-test:
-    # This is the crucial part: it tells the job to run on your new runner
+    # This job runs on your self-hosted runner
     runs-on: self-hosted
 
     steps:
     - name: Check out repository code
       uses: actions/checkout@v4
+
+    # - name: Get Bazel version
+    #   id: bazel
+    #   run: echo "version=$(cat .bazelversion)" >> $GITHUB_OUTPUT
+ 
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Cache Docker layers
+      uses: actions/cache@v4
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ hashFiles('**/Dockerfile') }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+
+    - name: Build Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        load: true
+        tags: a17-tools-dev:latest
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
 
     - name: Run CI Script
       run: |

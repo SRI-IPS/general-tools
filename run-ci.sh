@@ -1,29 +1,19 @@
 #!/bin/bash
 set -e
 
-IMAGE_NAME="a17-tools-dev"
-
-# Read bazel version for the build-arg
-BAZEL_VERSION=$(cat .bazelversion)
-
-# Ensure the Docker image is built. This reuses the logic from docker-dev.sh
-if [[ "$(docker images -q ${IMAGE_NAME}:latest 2> /dev/null)" == "" ]]; then
-  echo "Docker image '${IMAGE_NAME}' not found. Building..."
-  docker build \
-    --build-arg BAZEL_VERSION=${BAZEL_VERSION} \
-    --build-arg UID=$(id -u) \
-    --build-arg GID=$(id -g) \
-    -t ${IMAGE_NAME} \
-    -f Dockerfile .
-  echo "Docker image built successfully."
-fi
-
 echo "--- Running CI build and tests inside Docker container ---"
 
+IMAGE_NAME="a17-tools-dev:latest"
+
 # Run the commands non-interactively inside the container
+# The Docker image is now built by the GitHub Actions workflow itself.
 docker run --rm -v "$(pwd)":/workspace -w /workspace --user $(id -u):$(id -g) ${IMAGE_NAME} /bin/bash -c "
+  set -e
+  echo '--- Running CMake build and tests ---'
   /workspace/build_project.sh
-  # To run the bazel build as well, uncomment the following line:
+
+  # To run the bazel build as well, uncomment the following lines:
+  # echo '--- Running Bazel build and tests ---'
   # /workspace/build_bazel.sh
 "
 
