@@ -6,7 +6,7 @@
 set -e
 
 echo '>>> BUILDING AND TESTING WITH BAZEL <<<'
-cd /workspace
+cd "${A17_ROOT}"
 bazel build //...
 bazel test //...
 echo "--- Bazel build and test completed successfully ---"

@@ -14,17 +14,15 @@ The key dependency for this module is **Cap'n Proto** (version `0.8.0` as define
 
 This component is not intended to be built standalone. It is automatically built and installed as part of the main project build script.
 
-From the `/workspace` directory inside the development container, run:
+From the project root (`$A17_ROOT`) inside the development container, run:
 
-```bash
-/workspace/build_project.sh
-```
+    $A17_ROOT/build_project.sh
 
 This script will:
 
 1. Invoke the Cap'n Proto compiler (`capnpc`) to generate C++ header and source files from the `.capnp` schemas.
 2. Compile the generated sources into a shared library (`libcapnp_msgs.so`).
-3. Install the C++ headers, library, and the original `.capnp` schema files (for Python) into the `/workspace/install` directory.
+3. Install the C++ headers, library, and the original `.capnp` schema files (for Python) into the `$A17_ROOT/install` directory.
 
 ## Defining New Messages
 
@@ -36,10 +34,8 @@ Every `.capnp` file **must** begin with a unique 64-bit ID. This ID is used by C
 
 Generate a new ID by running the `capnp id` command:
 
-```bash
-# Run this inside the dev container or on a machine with capnp installed
-capnp id
-```
+    # Run this inside the dev container or on a machine with capnp installed
+    capnp id
 
 This will output a new, unique ID, for example: `@0xc315697a54491397;`
 
@@ -53,25 +49,21 @@ Paste the generated ID at the very top of the file. Then, define your data struc
 
 **Example: `my_new_message.capnp`**
 
-```capnp
-@0xc315697a54491397; # Paste your unique ID here
-
-using Cxx = import "/capnp/c++.capnp";
-$Cxx.namespace("a17::capnp_msgs");
-
-struct MySensorData {
-  timestamp @0 :UInt64;
-  sensorName @1 :Text;
-  readings @2 :List(Float64);
-}
-```
+    @0xc315697a54491397; # Paste your unique ID here
+    
+    using Cxx = import "/capnp/c++.capnp";
+    $Cxx.namespace("a17::capnp_msgs");
+    
+    struct MySensorData {
+      timestamp @0 :UInt64;
+      sensorName @1 :Text;
+      readings @2 :List(Float64);
+    }
 
 ### 4. Re-run the Build
 
 After adding your new file, simply re-run the main build script. CMake will automatically detect the new `.capnp` file and generate the corresponding C++ and Python code.
 
-```bash
-/workspace/build_project.sh
-```
+    $A17_ROOT/build_project.sh
 
 Your new message `MySensorData` will now be available to use in both C++ (as `a17::capnp_msgs::MySensorData`) and Python.
