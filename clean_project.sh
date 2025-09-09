@@ -8,11 +8,11 @@ set -e
 echo '>>> CLEANING PREVIOUS BUILD ARTIFACTS <<<'
 
 # Clean CMake build directories and install directory
-rm -rf /workspace/third_party/build
-rm -rf /workspace/a17/utils/build
-rm -rf /workspace/a17/capnp_msgs/build
-rm -rf /workspace/a17/dispatch/build
-rm -rf /workspace/install
+rm -rf "${A17_ROOT}/third_party/build"
+rm -rf "${A17_ROOT}/a17/utils/build"
+rm -rf "${A17_ROOT}/a17/capnp_msgs/build"
+rm -rf "${A17_ROOT}/a17/dispatch/build"
+rm -rf "${A17_ROOT}/install"
 
 # Clean Bazel cache
-cd /workspace && bazel clean --expunge
+cd "${A17_ROOT}" && bazel --output_user_root=/tmp/bazel_output clean --expunge

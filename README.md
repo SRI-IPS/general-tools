@@ -35,9 +35,7 @@ For a consistent and hassle-free development environment, we recommend using Doc
 
 * **Linux Post-installation:** To run Docker commands without `sudo`, you must add your user to the `docker` group. This is a one-time setup.
 
-```bash
-sudo usermod -aG docker $USER
-```
+    sudo usermod -aG docker $USER
 
 After running this command, you must **log out and log back in** for the new group membership to be applied. For more details, see the official Docker documentation.
 
@@ -45,25 +43,19 @@ After running this command, you must **log out and log back in** for the new gro
 
 1. Make the helper script executable:
 
-    ```bash
-    chmod +x docker-dev.sh
-    ```
+        chmod +x docker-dev.sh
 
 2. Run the script to start the development container:
 
-    ```bash
-    ./docker-dev.sh
-    ```
+        ./docker-dev.sh
 
-This will first build the Docker image (a one-time process) and then launch a bash shell inside the container. Your project directory is mounted at `/workspace`.
+This will first build the Docker image (a one-time process) and then launch a bash shell inside the container. Your project directory is mounted at `/workspace`, which is also available via the `$A17_ROOT` environment variable.
 
 Inside the container, you can now run the CMake or Bazel builds as you normally would. For example:
 
-```bash
-# To run the CMake build for dispatch
-cd a17/dispatch && mkdir build && cd build
-cmake .. && make && ./unittests_A17Dispatch
-```
+    # To run the CMake build for dispatch
+    cd a17/dispatch && mkdir build && cd build
+    cmake .. && make && ./unittests_A17Dispatch
 
 This project supports both **CMake** and **Bazel** for building the C++ components.
 
@@ -71,13 +63,11 @@ This project supports both **CMake** and **Bazel** for building the C++ componen
 
 CMake is the primary supported build system. Each component contains its own `CMakeLists.txt` file.
 
-```bash
-# Example for building the dispatch library
-cd a17/dispatch
-mkdir build && cd build
-cmake ..
-make
-```
+    # Example for building the dispatch library
+    cd a17/dispatch
+    mkdir build && cd build
+    cmake ..
+    make
 
 See the `a17/dispatch/README.md` for more detailed instructions on managing dependencies.
 
@@ -85,13 +75,11 @@ See the `a17/dispatch/README.md` for more detailed instructions on managing depe
 
 Bazel build files are also provided for integration into Bazel-based workflows.
 
-```bash
-# Build all targets
-bazel build //...
-
-# Run all tests
-bazel test //...
-```
+    # Build all targets
+    bazel build //...
+    
+    # Run all tests
+    bazel test //...
 
 ### Automated Build & Test (for CI)
 
@@ -99,15 +87,11 @@ If you want to run all builds and tests in one non-interactive command, use the 
 
 1. Make the script executable:
 
-    ```bash
-    chmod +x run-ci.sh
-    ```
+        chmod +x run-ci.sh
 
 2. Run the script:
 
-    ```bash
-    ./run-ci.sh
-    ```
+        ./run-ci.sh
 
 This will execute the CMake and Bazel builds and run all associated unit tests inside the Docker container.
 

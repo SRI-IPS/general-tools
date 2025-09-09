@@ -47,15 +47,13 @@ All Python dependencies for the project are listed in the `requirements.txt` fil
 
 You can install all required Python packages using `pip`. From the `/workspace` directory inside the development container, run:
 
-```bash
-pip install -r /workspace/requirements.txt
-```
+    pip install -r $A17_ROOT/requirements.txt
 
 ## Building
 
 The project is designed to be built inside the provided Docker development environment. Please see the top-level `README.md` for instructions on setting up and entering the container.
 
-All build commands below should be run from the `/workspace` directory inside the container.
+All build commands below should be run from the project root (`/workspace` or `$A17_ROOT`) inside the container.
 
 ### Building with CMake
 
@@ -63,32 +61,24 @@ This is the primary build method. The `build_project.sh` script orchestrates the
 
 To build and test `dispatch` along with all its internal dependencies (`a17-utils`, `a17-capnp_msgs`, etc.), run the main build script from the workspace root:
 
-```bash
-/workspace/build_project.sh
-```
+    $A17_ROOT/build_project.sh
 
-This script will build all components and place the final libraries and headers into `/workspace/install`. It also runs the unit tests for each component, including `unittests_A17Dispatch`.
+This script will build all components and place the final libraries and headers into `$A17_ROOT/install`. It also runs the unit tests for each component, including `unittests_A17Dispatch`.
 
 ### Environment Setup
 
-After a successful build using `build_project.sh`, the required libraries and Python modules will be in the `/workspace/install` directory. To run applications that use `dispatch`, you may need to update your environment variables:
+After a successful build using `build_project.sh`, the required libraries and Python modules will be in the `$A17_ROOT/install` directory. To run applications that use `dispatch`, you may need to update your environment variables:
 
-```bash
-export PYTHONPATH=/workspace/install/py:$PYTHONPATH
-export LD_LIBRARY_PATH=/workspace/install/lib:$LD_LIBRARY_PATH
-```
+    export PYTHONPATH=$A17_ROOT/install/py:$PYTHONPATH
+    export LD_LIBRARY_PATH=$A17_ROOT/install/lib:$LD_LIBRARY_PATH
 
 ### Building with Bazel
 
 Bazel build files are also provided.
 To build the library:
 
-```sh
-bazel build //a17/dispatch/... 
-```
+    bazel build //a17/dispatch/... 
 
 To run the tests:
 
-```sh
-bazel test //a17/dispatch/... 
-```
+    bazel test //a17/dispatch/... 
