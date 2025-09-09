@@ -1,0 +1,21 @@
+name: C++ and Python CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build-and-test:
+    # This is the crucial part: it tells the job to run on your new runner
+    runs-on: self-hosted
+
+    steps:
+    - name: Check out repository code
+      uses: actions/checkout@v4
+
+    - name: Run CI Script
+      run: |
+        chmod +x run-ci.sh
+        ./run-ci.sh
