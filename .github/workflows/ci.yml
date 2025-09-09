@@ -15,6 +15,12 @@ jobs:
     - name: Check out repository code
       uses: actions/checkout@v4
 
+    - name: Get runner user and group IDs
+      id: get-ids
+      run: |
+        echo "uid=$(id -u)" >> $GITHUB_OUTPUT
+        echo "gid=$(id -g)" >> $GITHUB_OUTPUT
+
     # - name: Get Bazel version
     #   id: bazel
     #   run: echo "version=$(cat .bazelversion)" >> $GITHUB_OUTPUT

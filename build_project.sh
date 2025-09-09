@@ -45,7 +45,7 @@ make -j$(nproc)
 ./unittests_A17Maths
 make install
 
-# 5. Build and test a17-dispatch, pointing it to our local install directory
+# 6. Build and test a17-dispatch, pointing it to our local install directory
 echo '--- Building a17-dispatch ---'
 cd /workspace/a17/dispatch
 mkdir -p build && cd build
