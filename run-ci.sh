@@ -7,7 +7,7 @@ IMAGE_NAME="a17-tools-dev:latest"
 
 # Run the commands non-interactively inside the container
 # The Docker image is now built by the GitHub Actions workflow itself.
-docker run --rm -v "$(pwd)":/workspace -w /workspace --user $(id -u):$(id -g) ${IMAGE_NAME} /bin/bash -c "
+docker run --rm -v "$(pwd)":/workspace:z -w /workspace --user $(id -u):$(id -g) ${IMAGE_NAME} /bin/bash -c "
   set -e
   echo '--- Running CMake build and tests ---'
   /workspace/build_project.sh
