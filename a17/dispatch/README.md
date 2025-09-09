@@ -8,7 +8,7 @@
 * **Service Discovery**: A built-in `Directory` uses UDP multicast to allow nodes to automatically discover each other's services (topics) on the network.
 * **Efficient Serialization**: Uses Cap'n Proto for fast, zero-copy serialization of messages.
 * **Asynchronous Core**: Built on Boost.Asio for high-performance, non-blocking I/O.
-* **Dual Build Systems**: Supports both **CMake** and **Bazel**.
+* **Build System**: Primarily supports **CMake**. (Bazel files are present but the main build script `build_project.sh` uses CMake).
 * **C++ and Python**: Provides APIs for both languages.
 
 ## Prerequisites
@@ -17,23 +17,29 @@
 
 You will need the following libraries installed:
 
-* **Boost** (>= 1.65.1, components: `system`, `regex`)
-* **ZeroMQ** (libzmq >= 4.2.5) - Note: Requires **libsodium** for CURVE security features.
-* **cppzmq** (Header-only ZeroMQ C++ bindings)
-* **azmq** (Header-only Boost.Asio integration for ZeroMQ)
-* **Cap'n Proto** (capnp, capnpc >= 0.6.1)
-* **spdlog** (>= 1.3.1, for logging)
-* **gflags** (>= 2.2.2, for command-line flag parsing)
-* **Catch** (for running tests)
+* **Boost** (System dependency, requires components: `system`, `regex`, `asio`)
+* **libsodium** (`1.0.10`)
+* **ZeroMQ** (libzmq `4.2.2`) - Note: Requires **libsodium** for CURVE security features.
+* **cppzmq** (`4.2.1`, header-only)
+* **azmq** (`v1.0.3`, header-only)
+* **Cap'n Proto** (`0.8.0`)
+* **gflags** (`2.2.1`)
+* **glog** (`0.3.5`)
+* **spdlog** (`0.12.0`)
+* **Eigen** (`3.4.0`, header-only)
+* **Catch** (Included in `third_party` for tests)
 
-We recommend using a package manager like vcpkg, Conan, or your system's package manager (e.g., `apt`, `brew`) to install them.
+The project provides scripts to install these dependencies from source (`install_dependencies.sh`) or from system packages (`install_apt_dependencies.sh`). For a reproducible build, using the source build script is recommended.
 
 ### Python Dependencies
 
-* `pycapnp`
+The Python dependencies are listed in the `requirements.txt` file at the root of the repository. Key runtime dependencies include:
+
+* `pycapnp` (`0.6.4`)
 * `pyzmq`
-* `tornado`
-* `netifaces`
+* `tornado` (`6.1`)
+* `netifaces` (`0.10.6`)
+* `numpy` (`1.19.5`)
 
 You can install these using pip:
 
@@ -43,43 +49,29 @@ pip install pycapnp pyzmq tornado netifaces
 
 ## Building
 
-First, clone the repository recursively to get the necessary submodules:
+The project is designed to be built inside the provided Docker development environment. Please see the top-level `README.md` for instructions on setting up and entering the container.
 
-```sh
-git clone --recursive <repository-url>
-```
+All build commands below should be run from the `/workspace` directory inside the container.
 
 ### Building with CMake
 
-This is the recommended way to build the C++ library and run its tests.
+This is the primary build method used by the project. The `build_project.sh` script orchestrates the build of all components in the correct order.
 
-```sh
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make install
-```
-
-To run the unit tests:
+To build and test `dispatch` along with all its internal dependencies (`a17-utils`, `a17-capnp_msgs`, etc.), run the main build script from the workspace root:
 
 ```bash
-cd build
-./unittests_A17Dispatch
+/workspace/build_project.sh
 ```
 
-### Environment Setup (Linux/macOS)
+This script will build all components and place the final libraries and headers into `/workspace/install`. It also runs the unit tests for each component, including `unittests_A17Dispatch`.
 
-After building, you may need to set your `PYTHONPATH` and `LD_LIBRARY_PATH` to run applications that use the `dispatch` library from your build directory.
+### Environment Setup
 
-First, set an environment variable pointing to your workspace root (e.g., the directory containing the `a17` folder):
+After a successful build using `build_project.sh`, the required libraries and Python modules will be in the `/workspace/install` directory. To run applications that use `dispatch`, you may need to update your environment variables:
 
 ```bash
-export A17_ROOT=/path/to/your/workspace
-```
-
-Then, update your library and Python paths.
-```bash
-export PYTHONPATH=$A17_ROOT/a17/dispatch/build/py:$PYTHONPATH
-export LD_LIBRARY_PATH=$A17_ROOT/a17/dispatch/build/lib:$LD_LIBRARY_PATH
+export PYTHONPATH=/workspace/install/lib/python3.8/site-packages:$PYTHONPATH
+export LD_LIBRARY_PATH=/workspace/install/lib:$LD_LIBRARY_PATH
 ```
 
 ### Building with Bazel
