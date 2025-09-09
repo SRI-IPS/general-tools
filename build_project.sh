@@ -18,14 +18,14 @@ echo '--- Building third_party dependencies ---'
 cd /workspace/third_party
 mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}
-make -j4 install # This will build and install Catch, among others
+make -j$(nproc) install # This will build and install Catch, among others
 
 # 3. Build, test, and install a17-utils
 echo '--- Building a17-utils ---'
 cd /workspace/a17/utils
 mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_PREFIX_PATH=${INSTALL_DIR}
-make -j4
+make -j$(nproc)
 ./unittests_A17Utils
 make install
 
@@ -34,14 +34,14 @@ echo '--- Building a17-capnp_msgs ---'
 cd /workspace/a17/capnp_msgs
 mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_PREFIX_PATH=${INSTALL_DIR}
-make -j4 install
+make -j$(nproc) install
 
 # 5. Build, test, and install a17-maths
 echo '--- Building a17-maths ---'
 cd /workspace/a17/maths
 mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_PREFIX_PATH=${INSTALL_DIR}
-make -j4
+make -j$(nproc)
 ./unittests_A17Maths
 make install
 
@@ -50,7 +50,7 @@ echo '--- Building a17-dispatch ---'
 cd /workspace/a17/dispatch
 mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${INSTALL_DIR}
-make -j4
+make -j$(nproc)
 ./unittests_A17Dispatch
 
 echo "--- CMake build and test completed successfully ---"
