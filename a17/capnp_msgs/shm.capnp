@@ -1,4 +1,4 @@
-@0xb5d4c8a3e2f91047;  # File-level unique ID (generated via `capnp id`)
+@0xf4b83230daa6a23e;  # File-level unique ID (generated via `capnp id`)
 
 # Metadata envelope published over ZeroMQ so a subscriber can
 # locate and map the POSIX shared memory segment holding the payload.
