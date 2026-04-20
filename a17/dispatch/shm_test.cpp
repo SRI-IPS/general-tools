@@ -16,7 +16,7 @@
 
 // Bring in the Cap'n Proto generated header so we can build handles manually
 // in the low-level ShmPool tests.
-#include "shm.capnp.h"
+#include "a17/capnp_msgs/shm.capnp.h"
 #include "smart_capnp_builder.h"
 #include "smart_capnp_reader.h"
 #include "a17/utils/buffer_pool.h"

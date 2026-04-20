@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "shm.capnp.h"        // generated from shm.capnp
+#include "a17/capnp_msgs/shm.capnp.h"        // generated from shm.capnp
 #include "shm_pool.h"
 #include "smart_capnp_reader.h"
 

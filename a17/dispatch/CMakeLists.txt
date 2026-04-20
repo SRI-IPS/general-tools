@@ -50,7 +50,6 @@ add_library(dispatch SHARED
   "reply_server.cpp"
   "request_client.cpp"
   "server.cpp"
-  "shm_pool.cpp"           # POSIX shared memory pool (shm_open/mmap/shm_unlink)
   "smart_capnp_builder.cpp"
   "smart_capnp_reader.cpp"
   "smart_message_reader.cpp"
