@@ -1,4 +1,4 @@
-@0xb5f2a8e03f7c1a20;
+@0xbcea2858f8d41433;
 
 using Cxx = import "/capnp/c++.capnp";
 $Cxx.namespace("a17::capnp_msgs::dispatch_nodes::chatter");
