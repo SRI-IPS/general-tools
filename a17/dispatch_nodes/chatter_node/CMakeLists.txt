@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 set(CMAKE_CXX_STANDARD 14)
 
-project(A17DispatchNodes VERSION 0.1.0 LANGUAGES CXX)
+project(A17ChatterNode VERSION 0.1.0 LANGUAGES CXX)
 
 if(DEFINED ENV{A17_ROOT})
   include("$ENV{A17_ROOT}/cmake/A17DefaultPaths.cmake")
@@ -16,6 +16,10 @@ set(CMAKE_MACOSX_RPATH TRUE)
 # ------------------------------------------------------------------------------
 # Set vars
 set(python_install_dir "py")
+
+# NOTE: This will break if this file is moved from //a17/dispatch_nodes/chatter_node.
+get_filename_component(workspace_root "../../.."
+  REALPATH BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # ------------------------------------------------------------------------------
 # Import dependencies
@@ -44,4 +48,4 @@ install(TARGETS dispatch_listener DESTINATION "bin")
 # Install Python sources
 file(GLOB python_src_files "*.py")
 install(FILES ${python_src_files}
-  DESTINATION "${python_install_dir}/a17/dispatch_nodes")
+  DESTINATION "${python_install_dir}/a17/dispatch_nodes/chatter_node")
