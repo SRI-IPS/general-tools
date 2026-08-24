@@ -17,10 +17,6 @@ set(CMAKE_MACOSX_RPATH TRUE)
 # Set vars
 set(python_install_dir "py")
 
-# NOTE: This will break if this file is moved from //a17/dispatch_nodes/chatter_node.
-get_filename_component(workspace_root "../../.."
-  REALPATH BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-
 # ------------------------------------------------------------------------------
 # Import dependencies
 find_package(A17Dispatch REQUIRED CONFIG)
@@ -43,6 +39,20 @@ target_link_libraries(dispatch_listener
   a17::dispatch
   a17::capnp_msgs)
 install(TARGETS dispatch_listener DESTINATION "bin")
+
+# ------------------------------------------------------------------------------
+# ${TEST_NAME} exe
+set(TEST_NAME unittests_${PROJECT_NAME})
+add_executable(${TEST_NAME}
+  "unittests_main.cpp"
+  "chatter_node_test.cpp")
+target_link_libraries(${TEST_NAME}
+  a17::capnp_msgs
+  catch
+  a17::dispatch)
+
+enable_testing()
+add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 
 # ------------------------------------------------------------------------------
 # Install Python sources

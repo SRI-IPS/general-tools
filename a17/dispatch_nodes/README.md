@@ -14,12 +14,14 @@ Simple nodes (like `chatter_node/`) contain:
 
 ```
 chatter_node/
-├── CMakeLists.txt   # CMake build
-├── BUILD.bazel      # Bazel build
-├── talker.py        # Python talker
-├── listener.py      # Python listener
-├── talker.cpp       # C++ talker
-└── listener.cpp     # C++ listener
+├── CMakeLists.txt          # CMake build
+├── BUILD.bazel             # Bazel build
+├── unittests_main.cpp      # Catch test runner entry point
+├── chatter_node_test.cpp   # Unit tests (Catch framework)
+├── talker.py               # Python talker
+├── listener.py             # Python listener
+├── talker.cpp              # C++ talker
+└── listener.cpp            # C++ listener
 ```
 
 More complex nodes may also include:
@@ -30,6 +32,10 @@ More complex nodes may also include:
 ├── dispatch_client.py  # Python client library
 └── scripts/            # Start/stop scripts
 ```
+
+## Testing
+
+Each example node includes unit tests using the [Catch](https://github.com/catchorg/Catch2) framework, following the same pattern as `a17/dispatch`. The CI (`build_project.sh`) builds each example and runs its `unittests_*` binary.
 
 ## Running Examples
 

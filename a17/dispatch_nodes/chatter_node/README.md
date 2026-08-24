@@ -76,6 +76,33 @@ bazel run //a17/dispatch_nodes/chatter_node:talker
 bazel run //a17/dispatch_nodes/chatter_node:listener
 ```
 
+## Tests
+
+Unit tests use the [Catch](https://github.com/catchorg/Catch2) framework, mirroring the test setup in `a17/dispatch/`.
+
+**Build and run (CMake):**
+
+```bash
+cd a17/dispatch_nodes/chatter_node
+mkdir build && cd build
+cmake .. -DCMAKE_PREFIX_PATH=$A17_ROOT/install
+make && ./unittests_A17ChatterNode
+```
+
+Pass `-r` to enable debug logging: `./unittests_A17ChatterNode -r`
+
+**Bazel:**
+
+```bash
+bazel test //a17/dispatch_nodes/chatter_node:chatter_node_test
+```
+
+The tests cover:
+
+- `Chatter` message build/read round-trip via `SmartCapnpBuilder`/`SmartCapnpReader`
+- Cap'n Proto type ID verification for the `Chatter` schema
+- End-to-end pub/sub over service discovery (one publisher, three subscribers), following the pattern in `a17/dispatch/socket_test.cpp`
+
 ## Command-Line Options
 
 Both C++ executables support:
