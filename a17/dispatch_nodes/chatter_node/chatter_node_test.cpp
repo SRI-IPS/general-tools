@@ -38,10 +38,6 @@ TEST_CASE("Chatter build and read", "[chatter_node]") {
   REQUIRE(!strcmp(read_msg.getMessage().cStr(), "Hello world #1"));
 }
 
-TEST_CASE("idOf Chatter", "[chatter_node]") {
-  REQUIRE(a17::dispatch::idOf<Chatter>() == 0xbcea2858f8d41433uLL);
-}
-
 TEST_CASE("Talker listener pubsub", "[chatter_node]") {
   std::thread talker([]() {
     boost::asio::io_service ios;

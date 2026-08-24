@@ -100,7 +100,6 @@ bazel test //a17/dispatch_nodes/chatter_node:chatter_node_test
 The tests cover:
 
 - `Chatter` message build/read round-trip via `SmartCapnpBuilder`/`SmartCapnpReader`
-- Cap'n Proto type ID verification for the `Chatter` schema
 - End-to-end pub/sub over service discovery (one publisher, three subscribers), following the pattern in `a17/dispatch/socket_test.cpp`
 
 ## Command-Line Options
