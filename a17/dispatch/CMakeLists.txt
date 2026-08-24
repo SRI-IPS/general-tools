@@ -70,7 +70,9 @@ target_link_libraries(dispatch PUBLIC
   gflags
   spdlog::spdlog
   threads
-  zeromq)
+  zeromq
+  # librt required for shm_open/shm_unlink on Linux; not present on macOS.
+  $<$<PLATFORM_ID:Linux>:rt>)
 install(TARGETS dispatch
   EXPORT "${targets_export_name}"
   ARCHIVE DESTINATION "lib"
@@ -94,6 +96,7 @@ add_executable(${TEST_NAME}
   "address_test.cpp"
   "messages_test.cpp"
   "directory_test.cpp"
+  "shm_test.cpp"           # shared memory pub/sub tests
   "socket_test.cpp"
   "topic_map_test.cpp"
   "topic_test.cpp"
@@ -101,7 +104,8 @@ add_executable(${TEST_NAME}
 target_link_libraries(${TEST_NAME}
   a17::capnp_msgs
   catch
-  dispatch)
+  dispatch
+  $<$<PLATFORM_ID:Linux>:rt>)
 
 enable_testing()
 add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
