@@ -1,0 +1,62 @@
+load("//tools/rules:catch_cc_test.bzl", "catch_cc_test")
+
+# pypi deps:
+#   absl-py
+#   pycapnp
+#   pyzmq
+py_binary(
+    name = "talker_py",
+    srcs = ["talker.py"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//a17/capnp_msgs:capnp_msgs_py",
+        "//a17/dispatch:dispatch_py",
+    ],
+)
+
+# pypi deps:
+#   absl-py
+#   pycapnp
+#   pyzmq
+py_binary(
+    name = "listener_py",
+    srcs = ["listener.py"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//a17/capnp_msgs:capnp_msgs_py",
+        "//a17/dispatch:dispatch_py",
+    ],
+)
+
+cc_binary(
+    name = "talker",
+    srcs = ["talker.cpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//a17/capnp_msgs",
+        "//a17/dispatch",
+    ],
+)
+
+cc_binary(
+    name = "listener",
+    srcs = ["listener.cpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//a17/capnp_msgs",
+        "//a17/dispatch",
+    ],
+)
+
+catch_cc_test(
+    name = "chatter_node_test",
+    size = "small",
+    srcs = [
+        "chatter_node_test.cpp",
+    ],
+    deps = [
+        "//a17/capnp_msgs",
+        "//a17/dispatch",
+        "//external:spdlog",
+    ],
+)

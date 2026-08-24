@@ -52,5 +52,14 @@ mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${INSTALL_DIR}
 make -j$(nproc)
 ./unittests_A17Dispatch
+make install
+
+# 7. Build and test the dispatch_nodes example nodes
+echo '--- Building a17-dispatch_nodes (chatter_node) ---'
+cd "${A17_ROOT}/a17/dispatch_nodes/chatter_node"
+mkdir -p build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${INSTALL_DIR}
+make -j$(nproc)
+./unittests_A17ChatterNode
 
 echo "--- CMake build and test completed successfully ---"
