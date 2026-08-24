@@ -7,15 +7,13 @@ on:
     branches: [ "master" ]
   workflow_dispatch:
 
-# Put the concurrency configuration here
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
   
 jobs:
   build-and-test:
-    # This job runs on your self-hosted runner
-    runs-on: self-hosted
+    runs-on: ubuntu-latest # Uses GitHub's free hosted Linux runner
 
     steps:
     - name: Check out repository code
@@ -27,20 +25,8 @@ jobs:
         echo "uid=$(id -u)" >> $GITHUB_OUTPUT
         echo "gid=$(id -g)" >> $GITHUB_OUTPUT
 
-    # - name: Get Bazel version
-    #   id: bazel
-    #   run: echo "version=$(cat .bazelversion)" >> $GITHUB_OUTPUT
- 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
-
-    - name: Cache Docker layers
-      uses: actions/cache@v4
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ hashFiles('**/Dockerfile') }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-
 
     - name: Build Docker image
       uses: docker/build-push-action@v5
@@ -48,8 +34,9 @@ jobs:
         context: .
         load: true
         tags: a17-tools-dev:latest
-        cache-from: type=local,src=/tmp/.buildx-cache
-        cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
+        # Uses GitHub Actions built-in cache cache backend instead of local file mounts
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
 
     - name: Run CI Script
       run: |
