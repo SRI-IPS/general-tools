@@ -81,7 +81,13 @@ void Client::disconnect(const std::string &address) {
   if (addresses_.count(address)) {
     if (logger) logger->info("{0} !@ {1}", log_name_, address);
     addresses_.erase(address);
-    azmqsocket_.disconnect(address);
+    // Non-throwing overload: a failed zmq_disconnect (e.g. EINVAL when the peer pipe is torn
+    // down) must not throw through the io_service handler and abort the process.
+    boost::system::error_code ec;
+    azmqsocket_.disconnect(address, ec);
+    if (ec && logger) {
+      logger->warn("{0} failed to disconnect from {1}: {2}", log_name_, address, ec.message());
+    }
     if (on_disconnect_) on_disconnect_(topic_name_);
   } else {
     if (logger) logger->info("{0} already disconnected from {1}", log_name_, address);
