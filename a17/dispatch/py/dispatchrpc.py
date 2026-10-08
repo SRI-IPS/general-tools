@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import argparse
-from concurrent.futures import ThreadPoolExecutor
 import logging
 from pydoc import locate
 import subprocess
+import sys
 
 import capnp
 
@@ -19,7 +19,7 @@ except ImportError:
 
 
 def _capnp_object_from_string(input_str, import_path, schema_file, capnp_type_name, capnp_type):
-    if import_path == None:
+    if import_path is None:
         import_path = ""
     short_type_name = capnp_type_name.split(".")[-1]
     # TODO(kgreenek): Find a way to do this in code, without running a subprocess.
@@ -44,34 +44,37 @@ def main():
     args = parser.parse_args()
 
     request_type = locate(args.request_type)
-    if request_type == None:
+    if request_type is None:
         print("ERROR: Invalid request-type")
-        exit(1)
+        sys.exit(1)
     reply_type = locate(args.reply_type)
-    if reply_type == None:
+    if reply_type is None:
         print("ERROR: Invalid reply-type")
-        exit(1)
+        sys.exit(1)
     request = _capnp_object_from_string(args.request, args.import_path, args.schema_file,
                                         args.request_type, request_type)
 
-    thread_pool = ThreadPoolExecutor(1)
     node = dispatch.Node("DispatchRpc")
-    node_future = thread_pool.submit(node.start)
+    node_thread = node.start()
 
-    request_client = dispatch.RpcRequestClient(node, args.device + "/" + args.topic, request_type,
-                                               reply_type)
-    rpc_future = request_client.execute(request, args.timeout)
-    reply = rpc_future.result()
-
-    if reply != None:
-        print("Received reply:")
-        print(reply)
-    else:
-        print("RPC error")
-
-    node.stop()
-    node_future.result()
-    thread_pool.shutdown()
+    full_topic = dispatch.topic_with_device_name(args.device, args.topic)
+    request_client = dispatch.RpcRequestClient(node, full_topic, request_type, reply_type)
+    
+    try:
+        rpc_future = request_client.execute(request, args.timeout)
+        reply = rpc_future.result()
+        if reply is not None:
+            print("Received reply:")
+            print(reply)
+        else:
+            print("RPC error: empty response received")
+    except dispatch.Error as e:
+        print(f"RPC error: {e}")
+    except Exception as e:
+        print(f"RPC failed with unexpected error: {e}")
+    finally:
+        node.stop()
+        node_thread.join()
 
 
 if __name__ == "__main__":

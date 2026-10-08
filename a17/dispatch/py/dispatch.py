@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import concurrent
+import concurrent.futures
 import datetime
 import functools
 import inspect
@@ -196,14 +196,14 @@ class Node(object):
         self.name = name
         self.logger = logging.getLogger(name)
         self.active = False
-        self.io_loop = ioloop.IOLoop.instance()
+        self.io_loop = ioloop.IOLoop.current()
         self.directory = Directory(self.io_loop, self.name)
 
         # ensure that we only call the signal handler from the main thread
         # if the node is started on a background thread, it is assumed that the main thread will
         # implement its own signal handling
         # TODO(pickledgator): maybe better to make this a param/flag instead
-        if threading.current_thread().__class__.__name__ == '_MainThread':
+        if threading.current_thread() is threading.main_thread():
             signal.signal(signal.SIGINT, _signalHandler)
             signal.signal(signal.SIGTERM, _signalHandler)
             signal.signal(signal.SIGHUP, _signalHandler)
@@ -223,7 +223,7 @@ class Node(object):
             self.logger.info("Node ({}) is starting".format(self.name))
             self.io_loop.start()
         else:
-            self.logger.warn("Node already running")
+            self.logger.warning("Node already running")
 
     def topic(self, topic_name):
         """Returns the fully-qualified topic name (include device name and node name) for the given
@@ -256,7 +256,7 @@ class Node(object):
     def start(self):
         # start ioloop on a background thread
         thread = threading.Thread(name=self.name, target=self.run)
-        thread.setDaemon(True)
+        thread.daemon = True
         thread.start()
         return thread
 
@@ -833,8 +833,9 @@ class Repeater:
 
         self.callback = callback
         self.callback_arg = callback_arg
-        if 'io_loop' in inspect.signature(ioloop.PeriodicCallback.__init__).parameters:
-            self.timer = ioloop.PeriodicCallback(operation, interval, node.io_loop)
+        sig_params = inspect.signature(ioloop.PeriodicCallback.__init__).parameters
+        if 'io_loop' in sig_params:
+            self.timer = ioloop.PeriodicCallback(operation, interval, io_loop=node.io_loop)
         else:
             self.timer = ioloop.PeriodicCallback(operation, interval)
         if autostart:

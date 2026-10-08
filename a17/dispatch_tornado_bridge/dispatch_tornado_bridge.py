@@ -7,7 +7,10 @@ import tornado.gen
 import tornado.web
 import tornado.websocket
 
-from a17.dispatch.py import dispatch
+try:
+    from a17.dispatch.py import dispatch
+except ImportError:
+    import dispatch
 
 
 class DispatchSubscriberWebSocketHandler(tornado.websocket.WebSocketHandler):
@@ -21,10 +24,11 @@ class DispatchSubscriberWebSocketHandler(tornado.websocket.WebSocketHandler):
             topic (string): The dispatch topic to subscribe to, and republish over the websocket.
             capnp_type (type): The type of the capnp dispatch message for the subscriber.
         """
-        self._logger = logging.getLogger()
+        self._logger = logging.getLogger(self.__class__.__name__)
         self._node = node
         self._topic = topic
         self._capnp_type = capnp_type
+        self._dispatch_subscriber = None
 
     def open(self):
         self._logger.info("WebSocket opened for dispatch topic (%s)", self._topic)
@@ -33,8 +37,9 @@ class DispatchSubscriberWebSocketHandler(tornado.websocket.WebSocketHandler):
 
     def on_close(self):
         self._logger.info("WebSocket closed for dispatch topic (%s)", self._topic)
-        self._dispatch_subscriber.close()
-        self._dispatch_subscriber = None
+        if self._dispatch_subscriber:
+            self._dispatch_subscriber.close()
+            self._dispatch_subscriber = None
 
     def handle_dispatch_message(self, message):
         """Subclasses can override this to perform logic whenever a message is received.
@@ -51,7 +56,7 @@ class DispatchSubscriberWebSocketHandler(tornado.websocket.WebSocketHandler):
 
     def _on_dispatch_message(self, message):
         if not self._dispatch_subscriber:
-            self._logger.warn("Received message after WebSocket closed (%s)", self._topic)
+            self._logger.warning("Received message after WebSocket closed (%s)", self._topic)
             return
         try:
             capnp_obj = self.handle_dispatch_message(dispatch.parse(message, self._capnp_type))
@@ -59,8 +64,8 @@ class DispatchSubscriberWebSocketHandler(tornado.websocket.WebSocketHandler):
                 json_obj = json.dumps(capnp_obj.to_dict())
                 self._logger.debug("Received dispatch message: %s", json_obj)
                 self.write_message(json_obj)
-        except:
-            self._logger.warn("Exception in _on_dispatch_message (%s)", self._topic, exc_info=True)
+        except Exception:
+            self._logger.warning("Exception in _on_dispatch_message (%s)", self._topic, exc_info=True)
 
 
 class DispatchRequestHandler(tornado.web.RequestHandler):
@@ -78,7 +83,7 @@ class DispatchRequestHandler(tornado.web.RequestHandler):
             reply_capnp_type (type): The type of the capnp dispatch reply message.
             timeout (float): Timeout in seconds to wait for internal dispatch request.
         """
-        self._logger = logging.getLogger()
+        self._logger = logging.getLogger(self.__class__.__name__)
         self._node = node
         self._topic = topic
         self._request_capnp_type = request_capnp_type
@@ -88,32 +93,30 @@ class DispatchRequestHandler(tornado.web.RequestHandler):
     @tornado.gen.coroutine
     def post(self):
         self._logger.debug("Request: %s", self.request.body)
-        request = None
         try:
             request_json = tornado.escape.json_decode(self.request.body)
             request = self._request_capnp_type.new_message(**request_json)
-        except Exception:
-            self._logger.info("Error converting json request to request_capnp_type")
-            raise
+        except Exception as e:
+            self._logger.info("Error converting json request to request_capnp_type: %s", e)
+            raise tornado.web.HTTPError(400, f"Invalid JSON request body: {e}")
+
         request_client = dispatch.RpcRequestClient(
             self._node, self._topic, self._request_capnp_type, self._reply_capnp_type)
-        request_future = request_client.execute(request)
-        reply = None
+        request_future = request_client.execute(request, self._timeout)
+
         try:
-            # This is a workaround for a bug in tornado, where it doesn't properly handle a yielded
-            # concurrent.futures.Future with python >3.2. The server will hang until the future
-            # times out if we simply yield request_future.result() here.
-            # See: https://github.com/tornadoweb/tornado/issues/1595
-            total_timeout = 1
-            while not request_future.done():
-                try:
-                    yield tornado.gen.with_timeout(datetime.timedelta(seconds=1), request_future)
-                except tornado.gen.TimeoutError:
-                    if total_timeout > self._timeout:
-                        raise TimeoutError()
-                total_timeout += 1
-            reply = request_future.result()
-        except TimeoutError:
-            self._logger.info("Dispatch request timed out (%s)\"}", self._topic)
-            raise
+            reply = yield tornado.gen.with_timeout(
+                datetime.timedelta(seconds=self._timeout),
+                request_future
+            )
+        except (tornado.gen.TimeoutError, dispatch.TimeoutError):
+            self._logger.info("Dispatch request timed out (%s)", self._topic)
+            raise tornado.web.HTTPError(504, f"Dispatch request timed out on topic {self._topic}")
+        except dispatch.ConnectionError as e:
+            self._logger.warning("Dispatch connection error (%s): %s", self._topic, e)
+            raise tornado.web.HTTPError(502, f"Dispatch connection error: {e}")
+        except Exception as e:
+            self._logger.error("Unexpected error handling dispatch request (%s): %s", self._topic, e)
+            raise tornado.web.HTTPError(500, f"Dispatch request failed: {e}")
+
         self.write(json.dumps(reply.to_dict()))
