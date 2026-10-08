@@ -61,5 +61,6 @@ mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${INSTALL_DIR}
 make -j$(nproc)
 ./unittests_A17ChatterNode
+make install
 
 echo "--- CMake build and test completed successfully ---"
