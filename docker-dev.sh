@@ -15,13 +15,13 @@ echo "To exit the container, type 'exit'."
 
 # This is the new, more advanced run command
 # It will create a user inside the container that matches your host user
-docker run -it --rm \
+docker run -it --rm --init \
   -v "$(pwd)":/workspace:z \
   -w /workspace \
   -e HOST_UID=$(id -u) \
   -e HOST_GID=$(id -g) \
   ${IMAGE_NAME} /bin/bash -c '
-    # Create a group and user on the fly with the host's IDs
+    # Create a group and user on the fly with the host IDs
     groupadd -f -g $HOST_GID user
     useradd -o -u $HOST_UID -g $HOST_GID -s /bin/bash -m user
     
