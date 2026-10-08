@@ -11,6 +11,10 @@
 * **Build System**: Primarily supports **CMake**. (Bazel files are present but the main build script `build_project.sh` uses CMake).
 * **C++ and Python**: Provides APIs for both languages.
 
+### Shared Memory (Local-Only)
+
+For large payloads such as camera frames or point clouds, dispatch provides a zero-copy shared memory transport via `ShmPublisher` / `ShmSubscriber` (C++) and `dispatch_shm.py` (Python). Instead of copying bytes through ZeroMQ, the publisher writes the payload directly into a POSIX shared memory segment and sends only a tiny `SharedMemoryHandle` message over the existing ZMQ socket; the subscriber maps the same segment and reads the data without any additional copy. **This mechanism is strictly constrained to processes running on the same physical machine** — it does not fall back to network transport and will fail if the publisher and subscriber are on different hosts. The standard ZMQ pub/sub path is completely unaffected and remains fully backwards-compatible.
+
 ## Prerequisites
 
 ### C++ Dependencies
