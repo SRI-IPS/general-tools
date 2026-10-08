@@ -266,7 +266,14 @@ class Node(object):
             self.active = False
             self.directory.stop()
             self.logger.info("Node ({}) is stopping".format(self.name))
-            self.io_loop.stop()
+            try:
+                # Tornado 6/asyncio: stop() only sets a flag, it does not wake a blocked
+                # selector. call_soon_threadsafe writes the self-pipe so the loop wakes,
+                # runs the queued directory cleanup, then stops.
+                self.io_loop.asyncio_loop.call_soon_threadsafe(self.io_loop.stop)
+            except AttributeError:
+                # Tornado 4.x PollIOLoop.stop() wakes its own pipe.
+                self.io_loop.stop()
 
     def scheduleOnce(self, delay, callback, *args):
         """Schedule a single callback on ioloop after delay
