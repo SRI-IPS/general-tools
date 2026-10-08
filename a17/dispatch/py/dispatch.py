@@ -2,6 +2,7 @@
 import concurrent
 import datetime
 import functools
+import inspect
 import logging
 import os
 import signal
@@ -832,7 +833,10 @@ class Repeater:
 
         self.callback = callback
         self.callback_arg = callback_arg
-        self.timer = ioloop.PeriodicCallback(operation, interval, node.io_loop)
+        if 'io_loop' in inspect.signature(ioloop.PeriodicCallback.__init__).parameters:
+            self.timer = ioloop.PeriodicCallback(operation, interval, node.io_loop)
+        else:
+            self.timer = ioloop.PeriodicCallback(operation, interval)
         if autostart:
             self.timer.start()
 
