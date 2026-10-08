@@ -18,11 +18,13 @@ from a17.dispatch.py import dispatch
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("node_name", "LISTENER", "Node name for this listener")
+flags.DEFINE_string("talker_node_name", "TALKER",
+                    "Node name of the talker to subscribe to")
 
 
 def main(argv):
     node = dispatch.Node(FLAGS.node_name)
-    topic = node.topic("CHATTER")
+    topic = dispatch.topic_str(dispatch.device_name(), FLAGS.talker_node_name, "CHATTER")
 
     def on_message(msg):
         chatter = dispatch.parse(msg, chatter_capnp.Chatter)

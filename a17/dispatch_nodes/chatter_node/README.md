@@ -99,8 +99,10 @@ bazel test //a17/dispatch_nodes/chatter_node:chatter_node_test
 
 The tests cover:
 
-- `Chatter` message build/read round-trip via `SmartCapnpBuilder`/`SmartCapnpReader`
-- End-to-end pub/sub over service discovery (one publisher, three subscribers), following the pattern in `a17/dispatch/socket_test.cpp`
+- Topic construction via `Node::topic()` (`TALKER/CHATTER`)
+- End-to-end message exchange between a `TALKER` node (publisher + repeater) and a `LISTENER` node (subscriber), verifying the received message contents
+
+Middleware internals (serialization, service discovery, socket plumbing) are covered by dispatch's own unit tests in `a17/dispatch`.
 
 ## Command-Line Options
 
@@ -110,10 +112,15 @@ Both C++ executables support:
 - `--device-name NAME` - Set device name prefix for topics
 - `--help` - Display help
 
-Python examples support the same via `absl.flags`:
+The listener additionally supports:
+
+- `--talker-node-name NAME` - Talker node name to subscribe to (default: TALKER)
+
+Python examples support flags via `absl.flags`:
 
 - `--node_name=NAME`
 - `--device_name=NAME`
+- `--talker_node_name=NAME` (listener only)
 
 ## Topic Naming
 
@@ -121,6 +128,10 @@ Topics are automatically prefixed with `device_name/node_name/`. For example:
 
 - `TALKER` node publishes on `TALKER/CHATTER` (no device name)
 - With `--device-name=P3`, topic becomes `P3/TALKER/CHATTER`
+
+The listener subscribes to the talker's fully-qualified topic, so it listens on
+`TALKER/CHATTER` by default. If you start the talker with a different node name, pass it to the
+listener with `--talker-node-name` (C++) or `--talker_node_name` (Python).
 
 ## Service Discovery
 

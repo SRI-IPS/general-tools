@@ -2,10 +2,12 @@
 #include <string>
 
 #include "a17/dispatch/node.h"
+#include "a17/dispatch/defs.h"
 #include "a17/capnp_msgs/dispatch_nodes/chatter.capnp.h"
 
 int main(int argc, const char *argv[]) {
   std::string node_name = "LISTENER";
+  std::string talker_node_name = "TALKER";
   std::string device_name;
 
   // Simple argument parsing
@@ -13,12 +15,16 @@ int main(int argc, const char *argv[]) {
     std::string arg(argv[i]);
     if (arg == "--node-name" && i + 1 < argc) {
       node_name = argv[++i];
+    } else if (arg == "--talker-node-name" && i + 1 < argc) {
+      talker_node_name = argv[++i];
     } else if (arg == "--device-name" && i + 1 < argc) {
       device_name = argv[++i];
     } else if (arg == "--help" || arg == "-h") {
       std::cout << "Usage: dispatch_listener [options]" << std::endl;
-      std::cout << "  --node-name NAME    Node name (default: LISTENER)" << std::endl;
-      std::cout << "  --device-name NAME  Device name prefix for topics" << std::endl;
+      std::cout << "  --node-name NAME         Node name (default: LISTENER)" << std::endl;
+      std::cout << "  --talker-node-name NAME  Talker node name to subscribe to (default: TALKER)"
+                << std::endl;
+      std::cout << "  --device-name NAME       Device name prefix for topics" << std::endl;
       return 0;
     }
   }
@@ -28,7 +34,7 @@ int main(int argc, const char *argv[]) {
   }
 
   a17::dispatch::Node node(node_name);
-  auto topic = node.topic("CHATTER");
+  a17::dispatch::Topic topic{a17::dispatch::DeviceName(), talker_node_name, "CHATTER"};
 
   auto sub = node.registerCapnpSubscriber<
       a17::capnp_msgs::dispatch_nodes::chatter::Chatter>(

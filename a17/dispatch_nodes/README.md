@@ -35,7 +35,7 @@ More complex nodes may also include:
 
 ## Testing
 
-Each example node includes unit tests using the [Catch](https://github.com/catchorg/Catch2) framework, following the same pattern as `a17/dispatch`. The CI (`build_project.sh`) builds each example and runs its `unittests_*` binary.
+Each example node includes unit tests using the [Catch](https://github.com/catchorg/Catch2) framework. Tests exercise the node API that the examples use (topics, publishers/subscribers, repeaters) — not middleware internals, which are covered by dispatch's own unit tests. The CI (`build_project.sh`) builds each example and runs its `unittests_*` binary.
 
 ## Running Examples
 
